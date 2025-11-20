@@ -23,6 +23,14 @@
         --cursor: var(--alg-red);
       }
 
+      .ascii-logo {
+        font-size: 10px;
+        line-height: 11px;
+        margin-bottom: 20px;
+        color: var(--text-main);
+        white-space: pre;
+      }
+
       body.light-mode {
         --bg-color: #e6e6e6;
         --text-main: #111111;
@@ -39,10 +47,10 @@
         background-color: var(--bg-color);
         color: var(--text-main);
         font-family: "IBM Plex Mono", monospace;
-        display: flex;
+        display: grid;
+        grid-template-columns: 300px 1fr 300px;
         height: 100vh;
         overflow: hidden;
-        text-transform: lowercase;
       }
 
       /* CRT overlays */
@@ -69,19 +77,51 @@
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
       }
 
-      /* Layout */
+      /* Layout base: sin bordes visibles al inicio */
       .sidebar {
         width: 300px;
+        height: 100vh; /* ← ESSENCIAL */
         padding: 40px;
-        border-right: var(--border-style);
-        overflow: hidden;
+        overflow-y: auto; /* ← Permite contenido largo */
         opacity: 0;
-        transition: opacity 0.3s;
+        border: none;
+        position: relative;
+        transition: opacity 0.25s linear;
+      }
+
+      .sidebar-inner {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .sidebar.active {
+        opacity: 1;
       }
 
       .sidebar-right {
-        border-right: none;
+        border-left: none;
+      }
+
+      .sidebar-left.active {
+        border-right: var(--border-style);
+      }
+
+      .sidebar-right.active {
         border-left: var(--border-style);
+      }
+
+      .sidebar-inner {
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        font-size: 12px;
+        color: var(--text-dim);
+        padding-top: 12px;
+        border-top: 1px dashed var(--text-dim);
       }
 
       .main-content {
@@ -94,56 +134,37 @@
         max-width: 900px;
         margin: 0 auto;
         line-height: 1.4;
-        overflow-y: auto;
         min-height: 100%;
       }
 
-      /* Intro */
       .centered {
         display: flex;
         align-items: center;
         justify-content: center;
       }
 
+      /* Intro */
       .intro-wrapper {
-        text-align: center;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 40px;
-        margin-top: 40px;
+        gap: 20px;
       }
 
-      .phi-art {
-        font-size: 14px;
-        line-height: 14px;
-        font-weight: 900;
-        white-space: pre;
+      .yin-art {
+        font-size: 11px;
+        line-height: 11px;
+        font-weight: 400;
         cursor: pointer;
-        text-align: center;
-        transform: scale(1.5);
+        text-align: left;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        max-width: 90vw;
       }
 
-      .controls-container {
-        display: flex;
-        gap: 30px;
-        justify-content: center;
-        font-size: 14px;
-        color: var(--text-dim);
-      }
-
-      .toggle-btn {
-        background: none;
-        border: none;
-        color: var(--text-dim);
-        cursor: pointer;
-        font-family: inherit;
-        font-size: inherit;
-      }
-
-      .toggle-btn:hover {
-        color: var(--alg-green);
-        text-shadow: 0 0 5px var(--alg-green);
+      .intro-controls {
+        font-size: 12px;
+        margin-top: 16px;
       }
 
       /* headers */
@@ -168,6 +189,21 @@
 
       button.nav-btn:hover {
         color: var(--text-main);
+      }
+
+      .toggle-btn {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12px;
+        margin-right: 8px;
+      }
+
+      .toggle-btn:hover {
+        color: var(--alg-green);
+        text-shadow: 0 0 5px var(--alg-green);
       }
 
       /* typewriter cursor */
@@ -217,23 +253,9 @@
         color: var(--alg-green);
         text-decoration: none;
       }
+
       a:hover {
         text-decoration: underline;
-      }
-
-      /* Φ logo fijo pequeño */
-      #phi-logo-fixed {
-        position: fixed;
-        top: 16px;
-        left: 18px;
-        z-index: 12000;
-        font-size: 8px;
-        line-height: 8px;
-        white-space: pre;
-        opacity: 0.75;
-        text-shadow: 0 0 6px var(--alg-green);
-        pointer-events: none;
-        display: none;
       }
 
       @media (max-width: 900px) {
@@ -241,13 +263,19 @@
           flex-direction: column;
           height: auto;
         }
+
         .sidebar {
           width: 100%;
           border-right: none;
           border-left: none;
-          border-bottom: var(--border-style);
         }
-        .sidebar-right {
+
+        .sidebar-left.active {
+          border-bottom: var(--border-style);
+          border-right: none;
+        }
+
+        .sidebar-right.active {
           border-top: var(--border-style);
           border-left: none;
         }
@@ -259,8 +287,6 @@
     <div class="scanlines"></div>
     <div class="noise-overlay"></div>
 
-    <div id="phi-logo-fixed"></div>
-
     <aside class="sidebar sidebar-left" id="sb-left"></aside>
 
     <main class="main-content">
@@ -270,98 +296,104 @@
     <aside class="sidebar sidebar-right" id="sb-right"></aside>
 
     <script>
-      /* ========== ASCII AUTO-PORTRAIT (TU CARA) ========== */
+      /* ========= YIN–YANG INTRO ART ========= */
+      const YINYANG_ART = String.raw`
+                           __....__
+                       .gd$$$$$$$$$$bp.
+                    .-"^^^T$$$$$$$$$$$$$p.
+                  .'       "^T$$$$$$$$$$$$b.
+                .'            \`T$$$$$$$$$$$$b.
+               /     .d$$b.     T$$$$$$$$$$$$$b
+              /     d$$$$$$b     $$$$$$$$$$$$$$b
+             :     :$$$$$$$$;    :$$$$$$$$$$$$$$;
+             ;      T$$$$$$P     :$$$$$$$$$$$$$$$
+            :        "^$$^"      $$$$$$$$$$$$$$$$;
+            ;                   d$$$$$$$$$$$$$$$$$
+            |                 .d$$$$$$$$$$$$$$$$$$
+            ;                d$$$$$$$$$$$$$$$$$$$$
+            :               :$$$$$$P^""^T$$$$$$$$;
+             ;              $$$$$$P      T$$$$$$$
+             :              $$$$$$        $$$$$$;
+              \             :$$$$$b      d$$$$$P
+               \             T$$$$$bp..gd$$$$$P
+                \`.            \`T$$$$$$$$$$$$P'
+                  \`.            "^$$$$$$$$P'
+                    "-.            "^^T$P'
+                       "--...____...--"
+            `;
+
+      const YINYANG_LOGO = String.raw`
+           _.ooo-._
+         .OOOP   _ '.
+        dOOOO   (_)  \
+       OOOOOb         |
+       OOOOOOb.       |
+       OOOOOOOOb      |
+        YOO(_)OOO    /
+         'OOOOOY  _.'
+           '""""''
+           `;
+
+      /* ========= TU ASCII (ABOUT) ========= */
       const ASCII_ME = String.raw`
-.....................................................................................................
-..............................=*##*****+=-..........................................................
-...........................=*###%***#***##*+**:.....................................................
-........................:#%###%%%#**#**#%#*#%##%%*-.................................................
-......................=#%%%%%%###%%####***#%#%%##%%#-...............................................
-.....................#%@@@%#%%%%####%%%#***+*%%@@%%%%%*.............................................
-...................:%@@%%%%%%%%%%%%%%#%%##*++*######%%%#............................................
-..................:%%@@%%%@@@@@@@@@%%%%*+*%%#******###%%:...........................................
-..................%%%@%%@@@@@@@@@@@%%#%#**=*#%%%%%%%#%%%*...........................................
-.................+%%%@@@@@@@@@@@@%%%%%#%##******#%***%@%#-..........................................
-.................%%%%@@@@@@@@@@@@@@@%%%**+***+++++#*+*##%#..........................................
-................-%%%@@@@@@@@@@@@@@@%%#++====-----=**##**##..........................................
-................-%%%@@%%%@@@@@@@@@%#++==---::::---+*#%#**+..........................................
-................=%%%@%%####%%%%##*****+--:::::::---*##***:..........................................
-.................%%%%#########****+==-----------:---=*++#-..........................................
-.................=%%#**#######***+**+=+*#%##**+--:---+++*:..........................................
-..................%%**%%%%%%%%##*****++*****=---=----+++*...........................................
-..................=%**############*++***#####+===----++----.........................................
-...................%***##%%%%%%%%#=-:=*#%##*+--:-::--==--+=.........................................
-...................#*#####%%#%%%#*--::---+**=---::------:==.........................................
-...................#**###########*--::::--------::----:+=::.........................................
-...................#**##########+=---::-=*+===--:::-----=-..........................................
-...................+**####**####*==---:::=##***=--------:-..........................................
-....................#*##*++######**+==+==-*####*+-----::::..........................................
-....................#*#############**#*=-::-*###*=----=--...........................................
-....................-**##############+-----:-*###=----..............................................
-.....................****###########**++**#%%%##*=----..............................................
-......................+#**##%@%#####*++---+---*#+----:..............................................
-......................-*#*###%%%##*+=-+=-::----=----::..............................................
-.......................-*#########*++++==-------==--::..............................................
-........................-##########*****=--------=-:::..............................................
-..........................############+=----:---=--:::..............................................
-...........................*#######+----::::---==--::::.............................................
-............................*#####*+===------++=---::::::.:.........................................
-............................+########***++=+*=-----:::::::++++++-:..................................
-............................:############**=-------::::::+**++++++++++==-...........................
-.............................*#########**+----------::::***+++++++++++++++++++-.....................
-............................-*########**+==--==-------+***++++++++++************++++=--.............
-.........................+++**#########***+=====----+****+++++++++********************+++-..........
-.....................:#%%#***#######*******+++==-=*****++++++++++***********************+++=........
-....................+%%%@%#**#######************#***++++++++++***************************++++-......
-...............:%%%#@%%%@@@%##########****#####******+++++********************************+++++.....
-.............+%%%%%@%%%%%%@@@@@@@@@@%#########***************************#******#***********++++....
-.........=#%%%%%%%%%%%%%%%%%%@@@@%####***********************************##*****#%***********++++...
-......=%%%@@%%%%%%%%%%@@@@@@@@@#*****************************************##*+***%%*************+++..
-.....%@@@@@@@@@@@@@@@@@@@@@@%#######***************************************%%**#%%**#***********++-.
-....%@@@@@@@@@@@@@@@@@@@@@@#########****************************************%@**%@**#*************+:
-...+@@@@@@@@@@@@@@@@@@@@@############****************************************#@##@##*************#*=
-...%@@@@@@@@@@@@@@@@@@@%################**#************************************@#%#%**######*****##*
-...@@@@@@@@@@@@@@@@@@%######################***********************************#@*#%**########***###
-..:@@@@@@@@@@@@@@@@%###########################*********************************@%#@**#########**###
-..-@@@@@@@@@@@@@@%##############################********************************%@%@#*#%%######**##%
-..=@@@@@@@@@@@@@%###########**###################*********
-`;
-
-      /* ========== Φ MAPS ========== */
-
-      // Φ grande (intro) estilo "sacred geometry" pero con noise
-      const phiBigMap = [
-        "........OOOOOOOOOOO........",
-        ".....OOO.........OOO.......",
-        "...OO...............OO.....",
-        "..O.................O......",
-        ".O......IIIIIIIII....O.....",
-        "O.......IIIIIIIII.....O....",
-        "O.......IIIIIIIII.....O....",
-        ".O......IIIIIIIII....O.....",
-        "..O.................O......",
-        "...OO...............OO.....",
-        ".....OOO.........OOO.......",
-        "........OOOOOOOOOOO........",
-      ];
-
-      // Φ chico logo fijo
-      const phiLogoSmallMap = [
-        "..OOOOOOO..",
-        ".OO.....OO.",
-        "O.........O",
-        "O...III...O",
-        "O...III...O",
-        "O...III...O",
-        "O.........O",
-        ".OO.....OO.",
-        "..OOOOOOO..",
-      ];
+                        .....................................................................................................
+                        ..............................=*##*****+=-..........................................................
+                        ...........................=*###%***#***##*+**:.....................................................
+                        ........................:#%###%%%#**#**#%#*#%##%%*-.................................................
+                        ......................=#%%%%%%###%%####***#%#%%##%%#-...............................................
+                        .....................#%@@@%#%%%%####%%%#***+*%%@@%%%%%*.............................................
+                        ...................:%@@%%%%%%%%%%%%%%#%%##*++*######%%%#............................................
+                        ..................:%%@@%%%@@@@@@@@@%%%%*+*%%#******###%%:...........................................
+                        ..................%%%@%%@@@@@@@@@@@%%#%#**=*#%%%%%%%#%%%*...........................................
+                        .................+%%%@@@@@@@@@@@@%%%%%#%##******#%***%@%#-..........................................
+                        .................%%%%@@@@@@@@@@@@@@@%%%**+***+++++#*+*##%#..........................................
+                        ................-%%%@@@@@@@@@@@@@@@%%#++====-----=**##**##..........................................
+                        ................-%%%@@%%%@@@@@@@@@%#++==---::::---+*#%#**+..........................................
+                        ................=%%%@%%####%%%%##*****+--:::::::---*##***:..........................................
+                        .................%%%%#########****+==-----------:---=*++#-..........................................
+                        .................=%%#**#######***+**+=+*#%##**+--:---+++*:..........................................
+                        ..................%%**%%%%%%%%##*****++*****=---=----+++*...........................................
+                        ..................=%**############*++***#####+===----++----.........................................
+                        ...................%***##%%%%%%%%#=-:=*#%##*+--:-::--==--+=.........................................
+                        ...................#*#####%%#%%%#*--::---+**=---::------:==.........................................
+                        ...................#**###########*--::::--------::----:+=::.........................................
+                        ...................#**##########+=---::-=*+===--:::-----=-..........................................
+                        ...................+**####**####*==---:::=##***=--------:-..........................................
+                        ....................#*##*++######**+==+==-*####*+-----::::..........................................
+                        ....................#*#############**#*=-::-*###*=----=--...........................................
+                        ....................-**##############+-----:-*###=----..............................................
+                        .....................****###########**++**#%%%##*=----..............................................
+                        ......................+#**##%@%#####*++---+---*#+----:..............................................
+                        ......................-*#*###%%%##*+=-+=-::----=----::..............................................
+                        .......................-*#########*++++==-------==--::..............................................
+                        ........................-##########*****=--------=-:::..............................................
+                        ..........................############+=----:---=--:::..............................................
+                        ...........................*#######+----::::---==--::::.............................................
+                        ............................*#####*+===------++=---::::::.:.........................................
+                        ............................+########***++=+*=-----:::::::++++++-:..................................
+                        ............................:############**=-------::::::+**++++++++++==-...........................
+                        .............................*#########**+----------::::***+++++++++++++++++++-.....................
+                        ............................-*########**+==--==-------+***++++++++++************++++=--.............
+                        .........................+++**#########***+=====----+****+++++++++********************+++-..........
+                        .....................:#%%#***#######*******+++==-=*****++++++++++***********************+++=........
+                        ....................+%%%@%#**#######************#***++++++++++***************************++++-......
+                        ...............:%%%#@%%%@@@%##########****#####******+++++********************************+++++.....
+                        .............+%%%%%@%%%%%%@@@@@@@@@@%#########***************************#******#***********++++....
+                        .........=#%%%%%%%%%%%%%%%%%%@@@@%####***********************************##*****#%***********++++...
+                        ......=%%%@@%%%%%%%%%%@@@@@@@@@#*****************************************##*+***%%*************+++..
+                        .....%@@@@@@@@@@@@@@@@@@@@@@%#######***************************************%%**#%%**#***********++-.
+                        ....%@@@@@@@@@@@@@@@@@@@@@@#########****************************************%@**%@**#*************+:
+                        ...+@@@@@@@@@@@@@@@@@@@@@############****************************************#@##@##*************#*=
+                        ...%@@@@@@@@@@@@@@@@@@@%################**#************************************@#%#%**######*****##*
+                        ...@@@@@@@@@@@@@@@@@@%######################***********************************#@*#%**########***###
+                        ..:@@@@@@@@@@@@@@@@%###########################*********************************@%#@**#########**###
+                        ..-@@@@@@@@@@@@@@%##############################********************************%@%@#*#%%######**##%
+                        ..=@@@@@@@@@@@@@%###########**###################*********
+            `;
 
       const noiseChars = [".", ":", "*", "`", "-", "="];
 
-      /* ========== DATA (TEXTOS) ========== */
-
+      /* ========= TEXTOS / MÓDULOS ========= */
       const Data = {
         i18n: {
           en: {
@@ -407,31 +439,31 @@
         modules: {
           about: {
             en: `
-<p><span style="color:var(--alg-green)">>></span> cat bio.txt</p>
-<pre id="ascii-me"></pre>
+                        <p><span style="color:var(--alg-green)">>></span> cat skull.txt</p>
+                        <pre id="ascii-me"></pre>
 
-<br>
+                        <br>
 
-<p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
-<pre id="ascii-bio">
-systems engineering student.
-obsessed with clean architecture.
-data-flow oriented mindset.
-</pre>
-            `,
+                        <p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
+                        <pre id="ascii-bio">
+                        systems engineering student.
+                        obsessed with clean architecture.
+                        data-flow oriented mindset.
+                        </pre>
+                        `,
             es: `
-<p><span style="color:var(--alg-green)">>></span> cat bio.txt</p>
-<pre id="ascii-me"></pre>
+                        <p><span style="color:var(--alg-green)">>></span> cat skull.txt</p>
+                        <pre id="ascii-me"></pre>
 
-<br>
+                        <br>
 
-<p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
-<pre id="ascii-bio">
-estudiante de ingeniería en sistemas.
-obsesionado con la arquitectura limpia.
-orientado al flujo de datos y la eficiencia.
-</pre>
-            `,
+                        <p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
+                        <pre id="ascii-bio">
+                        estudiante de ingeniería en sistemas.
+                        obsesionado con la arquitectura limpia.
+                        orientado al flujo de datos y la eficiencia.
+                        </pre>
+                        `,
           },
 
           stack: {
@@ -441,36 +473,35 @@ orientado al flujo de datos y la eficiencia.
 
           projects: {
             en: `
-<strong>[ transaction_manager ]</strong>
-<p>sql concurrency control engine.</p><br>
+                        <strong>[ transaction_manager ]</strong>
+                        <p>sql concurrency control engine.</p><br>
 
-<strong>[ stats_engine ]</strong>
-<p>python-based distributions and statistics.</p>
-            `,
+                        <strong>[ stats_engine ]</strong>
+                        <p>python-based distributions and statistics.</p>
+                        `,
             es: `
-<strong>[ gestor_transacciones ]</strong>
-<p>motor de concurrencia sql.</p><br>
+                        <strong>[ gestor_transacciones ]</strong>
+                        <p>motor de concurrencia sql.</p><br>
 
-<strong>[ motor_estadístico ]</strong>
-<p>modelos y distribuciones estadísticas.</p>
-            `,
+                        <strong>[ motor_estadístico ]</strong>
+                        <p>modelos y distribuciones estadísticas.</p>
+                        `,
           },
 
           contact: {
             en: `
-email: <a href="mailto:mail@me.com">mail@me.com</a><br>
-github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
-            `,
+                        email: <a href="mailto:mail@me.com">mail@me.com</a><br>
+                        github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
+                        `,
             es: `
-email: <a href="mailto:mail@me.com">mail@me.com</a><br>
-github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
-            `,
+                        email: <a href="mailto:mail@me.com">mail@me.com</a><br>
+                        github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
+                        `,
           },
         },
       };
 
-      /* ========== APP CORE ========== */
-
+      /* ========= APP ========= */
       const App = {
         state: {
           lang: "es",
@@ -483,9 +514,8 @@ github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
         audioEnabled: false,
 
         init() {
-          this.renderIntro();
-          this.startPhiIntroLoop();
           this.setupAudio();
+          this.renderIntro();
           setInterval(() => {
             if (this.state.booted) {
               this.state.uptime++;
@@ -495,7 +525,42 @@ github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
           }, 1000);
         },
 
-        /* ---------- AUDIO ---------- */
+        animateLogoGlitch(element) {
+          const colors = [
+            "var(--alg-green)",
+            "var(--alg-red)",
+            "var(--text-main)",
+            "#7afcff",
+            "#ffb3fe",
+          ];
+
+          const noise = [".", ":", "*", "`", "-", "=", "o", "O"];
+
+          const id = setInterval(() => {
+            const spans = element.querySelectorAll("span, .glitch-char");
+            if (spans.length === 0) return;
+
+            const span = spans[Math.floor(Math.random() * spans.length)];
+
+            // Mutación de carácter (25%)
+            if (Math.random() < 0.25) {
+              const original = span.textContent;
+              const mutated = noise[Math.floor(Math.random() * noise.length)];
+              span.textContent = mutated;
+              setTimeout(() => {
+                span.textContent = original;
+              }, 120 + Math.random() * 150);
+            }
+
+            // Cambio de color (100%)
+            span.style.color =
+              colors[Math.floor(Math.random() * colors.length)];
+          }, 40);
+
+          this.intervals.push(id);
+        },
+
+        /* --- AUDIO --- */
         setupAudio() {
           const unlock = () => {
             if (this.audioEnabled) return;
@@ -528,186 +593,298 @@ github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
           osc.stop(now + 0.06);
         },
 
-        /* ---------- INTRO ---------- */
-        renderIntro() {
-          const out = document.getElementById("terminal-output");
-          out.classList.add("centered");
-          const langBtn = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
-          const themeBtn =
-            this.state.theme === "dark" ? "[ light_mode ]" : "[ dark_mode ]";
-
-          out.innerHTML = `
-            <div class="intro-wrapper">
-              <div id="phi-art" class="phi-art" onclick="App.bootSystem()"></div>
-              <div class="controls-container">
-                <button class="toggle-btn" onclick="App.toggleLang()">${langBtn}</button>
-                <button class="toggle-btn" onclick="App.toggleTheme()">${themeBtn}</button>
-              </div>
-            </div>
-          `;
-        },
-
-        startPhiIntroLoop() {
-          const id = setInterval(() => this.updatePhiIntroFrame(), 120);
-          this.intervals.push(id);
-        },
-
-        updatePhiIntroFrame() {
-          const target = document.getElementById("phi-art");
-          if (!target) return;
-          let html = "";
-          phiBigMap.forEach((row) => {
-            let line = "";
-            for (let c of row) {
-              if (c === "O") {
-                line += `<span style="color:var(--alg-green);text-shadow:0 0 8px var(--alg-green)">█</span>`;
-              } else if (c === "I") {
-                const glow =
-                  Math.random() < 0.5 ? "var(--alg-green)" : "var(--alg-red)";
-                line += `<span style="color:${glow};text-shadow:0 0 8px ${glow}">█</span>`;
-              } else {
-                const useNoise = Math.random() < 0.12;
-                if (useNoise) {
-                  const n =
-                    noiseChars[Math.floor(Math.random() * noiseChars.length)];
-                  line += `<span style="color:var(--text-dim);opacity:.6">${n}</span>`;
-                } else {
-                  line += "&nbsp;";
-                }
-              }
-            }
-            html += line + "<br>";
-          });
-          target.innerHTML = html;
-        },
-
         clearIntervals() {
           this.intervals.forEach((id) => clearInterval(id));
           this.intervals = [];
         },
 
-        /* ---------- BOOT ---------- */
+        /* --- INTRO: YIN–YANG --- */
+        renderIntro() {
+          const out = document.getElementById("terminal-output");
+          out.classList.add("centered");
+
+          const langBtnText = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
+          const themeBtnText =
+            this.state.theme === "dark" ? "[ light mode ]" : "[ dark mode ]";
+
+          out.innerHTML = `
+                  <div class="intro-wrapper">
+                    <div id="yin-intro" class="yin-art"></div>
+                    <div id="intro-controls" class="intro-controls" style="display:none;">
+                      <button class="toggle-btn" id="intro-lang-btn">${langBtnText}</button>
+                      <button class="toggle-btn" id="intro-theme-btn">${themeBtnText}</button>
+                    </div>
+                  </div>
+                `;
+
+          const yin = document.getElementById("yin-intro");
+          yin.addEventListener("click", () => this.bootSystem());
+          this.typeYinIntro(yin, 1); // ajusta la velocidad aquí
+        },
+
+        async typeYinIntro(element, speed) {
+          element.innerHTML = "";
+          const text = YINYANG_ART;
+
+          for (let i = 0; i < text.length; i++) {
+            const ch = text[i];
+
+            if (ch === "\n") {
+              element.innerHTML += "<br>";
+            } else {
+              const isSpace = ch === " ";
+              const useGlitch = !isSpace && Math.random() < 0.12;
+              const colorPool = [
+                "var(--alg-green)",
+                "var(--alg-red)",
+                "var(--text-main)",
+              ];
+              const col =
+                colorPool[Math.floor(Math.random() * colorPool.length)];
+              const safeChar = ch === "<" ? "&lt;" : ch === ">" ? "&gt;" : ch;
+
+              if (useGlitch) {
+                element.innerHTML += `<span class="glitch-char" style="color:${col}">${safeChar}</span>`;
+              } else {
+                element.innerHTML += isSpace
+                  ? "&nbsp;"
+                  : `<span style="color:${col}">${safeChar}</span>`;
+              }
+            }
+
+            if (ch !== "\n" && ch !== " ") this.playKeySound();
+            if (speed > 0) {
+              await new Promise((r) => setTimeout(r, speed));
+            }
+          }
+
+          this.animateYinContinuous(element);
+
+          const controls = document.getElementById("intro-controls");
+          if (controls) controls.style.display = "block";
+        },
+
+        /* --- EFECTO VIVO YIN–YANG --- */
+        animateYinContinuous(element) {
+          const colors = [
+            "var(--alg-green)",
+            "var(--alg-red)",
+            "var(--text-main)",
+            "#7afcff",
+            "#ffb3fe",
+          ];
+
+          const id = setInterval(() => {
+            const spans = element.querySelectorAll("span, .glitch-char");
+            if (spans.length === 0) return;
+
+            const span = spans[Math.floor(Math.random() * spans.length)];
+
+            if (Math.random() < 0.2) {
+              const original = span.textContent;
+              const mutated =
+                noiseChars[Math.floor(Math.random() * noiseChars.length)];
+              span.textContent = mutated;
+              setTimeout(() => {
+                span.textContent = original;
+              }, 120 + Math.random() * 200);
+            }
+
+            span.style.color =
+              colors[Math.floor(Math.random() * colors.length)];
+          }, 35);
+
+          this.intervals.push(id);
+        },
+
+        /* --- TOGGLES EN INTRO (sin re-renderizar arte) --- */
+        toggleLangIntro() {
+          this.state.lang = this.state.lang === "en" ? "es" : "en";
+          const btn = document.getElementById("intro-lang-btn");
+          if (btn) {
+            btn.textContent = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
+          }
+        },
+
+        toggleThemeIntro() {
+          this.state.theme = this.state.theme === "dark" ? "light" : "dark";
+          document.body.classList.toggle("light-mode");
+          const btn = document.getElementById("intro-theme-btn");
+          if (btn) {
+            btn.textContent =
+              this.state.theme === "dark" ? "[ light mode ]" : "[ dark mode ]";
+          }
+        },
+
+        /* --- BOOT --- */
         bootSystem() {
           if (this.state.booted) return;
-          this.clearIntervals();
           this.state.booted = true;
           this.state.uptime = 0;
+
+          this.clearIntervals();
 
           const out = document.getElementById("terminal-output");
           out.classList.remove("centered");
           out.innerHTML = "";
 
+          const t = Data.i18n[this.state.lang];
+          const langBtnText = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
+          const themeBtnText =
+            this.state.theme === "dark" ? "[ light_mode ]" : "[ dark_mode ]";
+
           const sbLeft = document.getElementById("sb-left");
           const sbRight = document.getElementById("sb-right");
-          sbLeft.innerHTML = "";
-          sbRight.innerHTML = "";
+
           sbLeft.style.opacity = "1";
           sbRight.style.opacity = "1";
 
-          const t = Data.i18n[this.state.lang];
+          sbLeft.classList.add("active");
+          sbRight.classList.add("active");
+
+          // activar bordes justo al boot
+          sbLeft.classList.add("active");
+          sbRight.classList.add("active");
 
           const leftHTML = `
-<div class="ascii-header">${t.nav_h}</div>
-<nav class="corruptible-block">
-  <button class="nav-btn" onclick="App.loadModule('about')">${t.opts.about}</button>
-  <button class="nav-btn" onclick="App.loadModule('stack')">${t.opts.stack}</button>
-  <button class="nav-btn" onclick="App.loadModule('projects')">${t.opts.proj}</button>
-  <button class="nav-btn" onclick="App.loadModule('contact')">${t.opts.contact}</button>
-  <br>
-  <button class="nav-btn" onclick="App.resetToIntro()">${t.opts.back}</button>
-</nav>
-          `;
+      <div class="sidebar-inner">
+
+        <pre class="ascii-logo">${YINYANG_LOGO}</pre>
+
+        <div>
+          <div class="ascii-header">${t.nav_h}</div>
+          <nav>
+            <button class="nav-btn" onclick="App.loadModule('about')">${t.opts.about}</button>
+            <button class="nav-btn" onclick="App.loadModule('projects')">${t.opts.proj}</button>
+            <button class="nav-btn" onclick="App.loadModule('contact')">${t.opts.contact}</button>
+            <button class="nav-btn" onclick="App.loadModule('logs')">05. logs</button>
+            <br>
+            <button class="nav-btn" onclick="App.resetToIntro()">${t.opts.back}</button>
+          </nav>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="toggle-btn" onclick="App.toggleLang()">${langBtnText}</button>
+          <button class="toggle-btn" onclick="App.toggleTheme()">${themeBtnText}</button>
+        </div>
+
+      </div>
+      `;
 
           const rightHTML = `
-<div class="ascii-header">${t.sys_h}</div>
-<div class="corruptible-block">
-  ${t.sys.user} guest<br>
-  ${t.sys.status} <span style="color:var(--alg-green)">${t.sys.val}</span><br>
-  ${t.sys.uptime} <span id="uptime">0s</span>
-</div>
-<br>
-<div class="ascii-header">${t.mem_h}</div>
-<div id="heap-dump" style="font-size:11px;color:var(--alg-green);opacity:.7;"></div>
-<br>
-<div class="ascii-header">${t.debug_h}</div>
-<div id="debug-log" style="font-size:11px;max-height:160px;overflow:hidden;"></div>
-          `;
+                  <div class="sidebar-inner">
+                    <div>
+                      <div class="ascii-header">${t.sys_h}</div>
+                      <div>
+                        ${t.sys.user} guest<br>
+                        ${t.sys.status} <span style="color:var(--alg-green)">${t.sys.val}</span><br>
+                        ${t.sys.uptime} <span id="uptime">0s</span>
+                      </div>
+                      <br>
+                      <div class="ascii-header">${t.mem_h}</div>
+                      <div id="heap-dump" style="font-size:11px;color:var(--alg-green);opacity:.7;"></div>
+                      <br>
+                      <div class="ascii-header">${t.debug_h}</div>
+                      <div id="debug-log" style="font-size:11px;max-height:160px;overflow:hidden;"></div>
+                    </div>
+                  </div>
+                `;
 
-          // sidebars
-          this.typeHTML(sbLeft, leftHTML, 2);
-          this.typeHTML(sbRight, rightHTML, 2).then(() => {
+          // sidebars se escriben en simultáneo
+          this.typeHTML(sbLeft, leftHTML, 2, true).then(() => {
+            const logo = sbLeft.querySelector(".ascii-logo");
+            if (logo) {
+              // Convierte el ASCII en <span> para permitir glitch dinámico
+              this.wrapLogoChars(logo);
+              this.animateLogoGlitch(logo);
+            }
+          });
+
+          this.typeHTML(sbRight, rightHTML, 2, true).then(() => {
             this.startHeapDump();
           });
 
-          // boot log
           const bootLog =
             this.state.lang === "en"
               ? `
-<span style="color:var(--alg-green)">> starting system...</span>
-loading kernel modules [ ok ]
-initializing runtime environment [ ok ]
-checking memory map [ ok ]
-mounting root filesystem [ ok ]
-starting user-session [ ok ]
+                      <span style="color:var(--alg-green)">> starting system...</span>
+                      loading kernel modules [ ok ]
+                      initializing runtime environment [ ok ]
+                      checking memory map [ ok ]
+                      mounting root filesystem [ ok ]
+                      starting user-session [ ok ]
 
-<span style="color:var(--alg-green)">system ready.</span>
-          `
+                      <span style="color:var(--alg-green)">system ready.</span>
+                    `
               : `
-<span style="color:var(--alg-green)">> starting system...</span>
-cargando módulos del kernel [ ok ]
-inicializando entorno de ejecución [ ok ]
-verificando mapa de memoria [ ok ]
-montando sistema de archivos raíz [ ok ]
-iniciando sesión de usuario [ ok ]
+                      <span style="color:var(--alg-green)">> starting system...</span>
+                      cargando módulos del kernel [ ok ]
+                      inicializando entorno de ejecución [ ok ]
+                      verificando mapa de memoria [ ok ]
+                      montando sistema de archivos raíz [ ok ]
+                      iniciando sesión de usuario [ ok ]
 
-<span style="color:var(--alg-green)">system ready.</span>
-          `;
+                      <span style="color:var(--alg-green)">system ready.</span>
+                    `;
 
+          // log central también se escribe mientras los sidebars se van tipeando
           this.typeHTML(out, bootLog, 8).then(() => {
             this.logEvent("SYSTEM_READY");
             setTimeout(() => this.loadModule("about"), 400);
           });
+        },
 
-          // mostrar logo Φ pequeño
-          const logo = document.getElementById("phi-logo-fixed");
-          logo.style.display = "block";
-          this.startPhiLogoLoop();
+        wrapLogoChars(element) {
+          const text = element.innerText;
+          element.innerHTML = "";
+
+          for (let ch of text) {
+            if (ch === "\n") {
+              element.innerHTML += "<br>";
+            } else if (ch === " ") {
+              element.innerHTML += "&nbsp;";
+            } else {
+              element.innerHTML += `<span>${ch}</span>`;
+            }
+          }
         },
 
         resetToIntro() {
           this.clearIntervals();
           this.state.booted = false;
+
           const sbLeft = document.getElementById("sb-left");
           const sbRight = document.getElementById("sb-right");
-          sbLeft.style.opacity = "0";
-          sbRight.style.opacity = "0";
           sbLeft.innerHTML = "";
           sbRight.innerHTML = "";
-
-          const logo = document.getElementById("phi-logo-fixed");
-          logo.style.display = "none";
-          logo.innerHTML = "";
+          sbLeft.classList.remove("active");
+          sbRight.classList.remove("active");
 
           const out = document.getElementById("terminal-output");
           out.innerHTML = "";
           out.classList.add("centered");
+
           this.renderIntro();
-          this.startPhiIntroLoop();
         },
 
-        /* ---------- TYPEWRITER ---------- */
-        async typeHTML(element, html, speed) {
+        /* --- TYPEWRITER GENERAL --- */
+        async typeHTML(element, html, speed, noCursor = false) {
           return new Promise(async (resolve) => {
             element.innerHTML = "";
-            const cursor = document.createElement("span");
-            cursor.className = "typing-cursor";
-            element.appendChild(cursor);
+
+            let cursor = null;
+            if (!noCursor) {
+              cursor = document.createElement("span");
+              cursor.className = "typing-cursor";
+              element.appendChild(cursor);
+            }
 
             const parts = html.split(/(<[^>]+>)/g).filter((p) => p !== "");
 
             for (let part of parts) {
               if (part.startsWith("<") && part.endsWith(">")) {
-                cursor.insertAdjacentHTML("beforebegin", part);
+                if (cursor) cursor.insertAdjacentHTML("beforebegin", part);
+                else element.insertAdjacentHTML("beforeend", part);
               } else {
                 for (let c of part) {
                   const useGlitch = Math.random() < 0.02 && c !== " ";
@@ -715,18 +892,20 @@ iniciando sesión de usuario [ ok ]
                     ? `<span class="glitch-char">${c}</span>`
                     : c;
 
-                  cursor.insertAdjacentHTML("beforebegin", chunk);
-                  this.playKeySound();
+                  if (cursor) cursor.insertAdjacentHTML("beforebegin", chunk);
+                  else element.insertAdjacentHTML("beforeend", chunk);
+
+                  if (c !== " " && c !== "\n") this.playKeySound();
                   await new Promise((r) => setTimeout(r, speed));
                 }
               }
             }
-            cursor.remove();
+
+            if (cursor) cursor.remove();
             resolve(true);
           });
         },
-
-        /* ---------- MODULES ---------- */
+        /* --- MÓDULOS --- */
         loadModule(key) {
           const out = document.getElementById("terminal-output");
           const content = Data.modules[key][this.state.lang];
@@ -753,7 +932,7 @@ iniciando sesión de usuario [ ok ]
           this.intervals.push(interval);
         },
 
-        /* ---------- HEAP + LOG ---------- */
+        /* --- HEAP + LOG --- */
         startHeapDump() {
           const el = document.getElementById("heap-dump");
           if (!el) return;
@@ -800,46 +979,30 @@ iniciando sesión de usuario [ ok ]
           }
         },
 
-        /* ---------- Φ LOGO PEQUEÑO ---------- */
-        startPhiLogoLoop() {
-          const id = setInterval(() => {
-            const target = document.getElementById("phi-logo-fixed");
-            if (!target) return;
-            let html = "";
-            phiLogoSmallMap.forEach((row) => {
-              let line = "";
-              for (let c of row) {
-                if (c === "O" || c === "I") {
-                  line += `<span style="color:var(--alg-green)">█</span>`;
-                } else {
-                  line += "&nbsp;";
-                }
-              }
-              html += line + "<br>";
-            });
-            target.innerHTML = html;
-          }, 220);
-          this.intervals.push(id);
-        },
-
-        /* ---------- TOGGLES ---------- */
+        /* --- TOGGLES EN MODO SISTEMA --- */
         toggleLang() {
           this.state.lang = this.state.lang === "en" ? "es" : "en";
-          if (this.state.booted) {
-            this.bootSystem();
-          } else {
-            this.renderIntro();
-          }
+          if (this.state.booted) this.bootSystem();
         },
 
         toggleTheme() {
           this.state.theme = this.state.theme === "dark" ? "light" : "dark";
           document.body.classList.toggle("light-mode");
-          if (!this.state.booted) this.renderIntro();
+          if (this.state.booted) this.bootSystem();
         },
       };
 
+      window.App = App;
       window.onload = () => App.init();
+
+      // listeners de intro (para que no se pierdan si se re-renderiza)
+      document.addEventListener("click", (e) => {
+        if (e.target && e.target.id === "intro-lang-btn") {
+          App.toggleLangIntro();
+        } else if (e.target && e.target.id === "intro-theme-btn") {
+          App.toggleThemeIntro();
+        }
+      });
     </script>
   </body>
 </html>
