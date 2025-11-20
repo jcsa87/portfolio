@@ -1,563 +1,845 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>~/system/dark_side</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>~/terminal</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        /* --- [ SYSTEM CONFIG ] --- */
-        :root {
-            --bg-color: #000000;
-            --text-main: #e0e0e0;
-            --text-dim: #444444;
-            --panel-bg: #000000;
-            
-            /* -- ALGERIAN PALETTE -- */
-            --alg-green: #006233; 
-            --alg-red: #D21034;   
-            
-            /* -- SEMANTICS -- */
-            --border-color: var(--alg-green);
-            --keyword: var(--alg-green);
-            --function: var(--alg-red);
-            --string: #ffffff;
-            --comment: var(--text-dim);
-            --cursor: var(--alg-red);
-            
-            /* -- BINARY RAIN -- */
-            --binary-dim: #00331a; 
-            --binary-bright: #00ff55; 
+      :root {
+        --bg-color: #050505;
+        --text-main: #e0e0e0;
+        --text-dim: #666666;
+        --alg-green: #00d26a;
+        --alg-red: #ff0038;
+        --border-style: 2px dashed var(--alg-green);
+        --cursor: var(--alg-red);
+      }
+
+      body.light-mode {
+        --bg-color: #e6e6e6;
+        --text-main: #111111;
+        --text-dim: #888888;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        font-family: "IBM Plex Mono", monospace;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+        text-transform: lowercase;
+      }
+
+      /* CRT overlays */
+      .scanlines {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0) 0px,
+          rgba(255, 255, 255, 0) 2px,
+          rgba(0, 0, 0, 0.12) 3px
+        );
+        z-index: 9999;
+        opacity: 0.5;
+      }
+
+      .noise-overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.03;
+        z-index: 9998;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      /* Layout */
+      .sidebar {
+        width: 300px;
+        padding: 40px;
+        border-right: var(--border-style);
+        overflow: hidden;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .sidebar-right {
+        border-right: none;
+        border-left: var(--border-style);
+      }
+
+      .main-content {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+      }
+
+      #terminal-output {
+        max-width: 900px;
+        margin: 0 auto;
+        line-height: 1.4;
+        overflow-y: auto;
+        min-height: 100%;
+      }
+
+      /* Intro */
+      .centered {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .intro-wrapper {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+        margin-top: 40px;
+      }
+
+      .phi-art {
+        font-size: 14px;
+        line-height: 14px;
+        font-weight: 900;
+        white-space: pre;
+        cursor: pointer;
+        text-align: center;
+        transform: scale(1.5);
+      }
+
+      .controls-container {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        font-size: 14px;
+        color: var(--text-dim);
+      }
+
+      .toggle-btn {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+      }
+
+      .toggle-btn:hover {
+        color: var(--alg-green);
+        text-shadow: 0 0 5px var(--alg-green);
+      }
+
+      /* headers */
+      .ascii-header {
+        color: var(--alg-green);
+        font-weight: 600;
+        margin-bottom: 12px;
+        white-space: pre;
+      }
+
+      button.nav-btn {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        font-family: inherit;
+        font-size: 15px;
+        cursor: pointer;
+        margin-bottom: 10px;
+        text-align: left;
+        width: 100%;
+      }
+
+      button.nav-btn:hover {
+        color: var(--text-main);
+      }
+
+      /* typewriter cursor */
+      .typing-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 1em;
+        background-color: var(--cursor);
+        animation: blink 0.5s infinite;
+        vertical-align: bottom;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
         }
-
-        body.light-mode {
-            --bg-color: #f4f4f4;
-            --text-main: #111111;
-            --text-dim: #888888;
-            --panel-bg: #ffffff;
-            --string: #444444;
+        50% {
+          opacity: 0.1;
         }
+      }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+      /* glitch chars */
+      .glitch-char {
+        animation: glitch 0.15s linear alternate;
+      }
 
+      @keyframes glitch {
+        0% {
+          opacity: 0.2;
+          transform: translateX(-1px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(1px);
+        }
+      }
+
+      pre {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        line-height: 1.05;
+        white-space: pre;
+      }
+
+      a {
+        color: var(--alg-green);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* Φ logo fijo pequeño */
+      #phi-logo-fixed {
+        position: fixed;
+        top: 16px;
+        left: 18px;
+        z-index: 12000;
+        font-size: 8px;
+        line-height: 8px;
+        white-space: pre;
+        opacity: 0.75;
+        text-shadow: 0 0 6px var(--alg-green);
+        pointer-events: none;
+        display: none;
+      }
+
+      @media (max-width: 900px) {
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            text-transform: lowercase;
-            transition: background-color 0.3s, color 0.3s;
+          flex-direction: column;
+          height: auto;
         }
-
-        /* --- LAYOUT --- */
-        .sidebar-left, .sidebar-right {
-            width: 260px;
-            border-right: 1px solid var(--border-color); /* Adjusted for initial hidden state */
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background-color: var(--panel-bg);
-            flex-shrink: 0;
-            z-index: 10;
-            transition: transform 0.5s ease-out; /* Slide in effect */
-            transform: translateX(-100%); /* Start hidden left */
+        .sidebar {
+          width: 100%;
+          border-right: none;
+          border-left: none;
+          border-bottom: var(--border-style);
         }
         .sidebar-right {
-            border-left: 1px solid var(--border-color);
-            border-right: none; /* Only one border per sidebar */
-            transform: translateX(100%); /* Start hidden right */
+          border-top: var(--border-style);
+          border-left: none;
         }
-
-        body.loaded .sidebar-left { transform: translateX(0); }
-        body.loaded .sidebar-right { transform: translateX(0); }
-
-
-        .main-content {
-            flex: 1;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-color);
-            overflow: hidden; 
-        }
-
-        #terminal-output {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            padding: 40px;
-            scrollbar-width: none; 
-            box-sizing: border-box; /* Padding included in width/height */
-            display: flex; /* For centering prism */
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        #terminal-output::-webkit-scrollbar { display: none; }
-
-        /* --- UI ELEMENTS --- */
-        button {
-            color: inherit;
-            text-decoration: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: inherit;
-            display: block;
-            margin-bottom: 8px;
-            text-align: left;
-            transition: color 0.2s;
-            width: 100%;
-        }
-        button:hover { color: var(--string); }
-        button:hover::before { content: "["; color: var(--alg-red); margin-right: 5px; }
-        button:hover::after { content: "]"; color: var(--alg-red); margin-left: 5px; }
-
-        /* --- PRISM ASCII STYLES --- */
-        .intro-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            width: 100%;
-            cursor: pointer;
-            box-sizing: border-box;
-            max-width: 900px; /* Limita el ancho en pantallas muy grandes */
-        }
-        
-        .prism-art {
-            font-size: 14px; 
-            white-space: pre; 
-            line-height: 12px; /* Más compacto para líneas mas finas */
-            margin-bottom: 30px;
-            font-weight: bold;
-            text-align: center;
-            color: var(--text-main);
-            transform: scale(1.1); /* Un poco más grande */
-            transition: transform 0.2s;
-            min-width: 300px; /* Asegura que no sea demasiado pequeño */
-        }
-
-        /* HAZ DE LUZ DE ENTRADA (Blanco Puro) */
-        .beam-in { 
-            color: #ffffff; 
-            text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff; 
-            font-weight: 900;
-        }
-
-        /* HAZ DE LUZ DE SALIDA (Arcoiris Argelia) */
-        .beam-out { 
-            animation: colorCycle 3s infinite alternate; /* Más suave y alternado */
-            font-weight: 900;
-            text-shadow: 0 0 3px currentColor, 0 0 6px currentColor;
-        }
-
-        /* BORDE DEL TRIÁNGULO */
-        .tri-border {
-            color: var(--text-dim);
-            font-weight: bold;
-        }
-
-        /* INTERIOR DEL TRIÁNGULO (Ruido de datos) */
-        .tri-noise {
-            color: var(--text-dim);
-            opacity: 0.3;
-        }
-
-        @keyframes colorCycle {
-            0% { color: var(--alg-green); }
-            50% { color: var(--alg-red); }
-            100% { color: var(--alg-green); }
-        }
-
-        .click-prompt {
-            animation: blink 1.5s infinite; /* Parpadeo más estándar */
-            color: var(--text-dim);
-            font-size: 12px;
-            margin-top: 40px;
-            opacity: 0; /* Oculto hasta que el prisma se escribe */
-            transition: opacity 0.5s;
-        }
-
-        .click-prompt.active { opacity: 1; } /* Se activa al terminar la escritura */
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        .fade-in { animation: fadeIn 0.5s ease-in forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Contenido del módulo cuando se muestra */
-        .module-content {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: left;
-            padding-top: 50px; /* Ajuste si el main-content ya no tiene padding */
-        }
-
-        .kw { color: var(--keyword); font-weight: 600; }
-        .fn { color: var(--function); }
-        .str { color: var(--string); }
-        .com { color: var(--comment); font-style: italic;}
-        pre { padding: 20px 0; overflow-x: auto; font-size: 13px; }
-        
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 1.2em;
-            background-color: var(--cursor);
-            vertical-align: bottom;
-        }
-        .cursor.blinking { animation: blink 1s step-end infinite; }
-
-        @media (max-width: 1000px) {
-            body { flex-direction: column; height: auto; overflow: auto; }
-            .sidebar-left, .sidebar-right { 
-                width: 100%; height: auto; border: none; border-bottom: 1px solid var(--border-color); 
-                transform: translateX(0) !important; /* Siempre visibles en móvil */
-            }
-            .main-content { padding: 0; }
-            #terminal-output { padding: 20px; min-height: 500px; height: auto; } 
-            .intro-container { height: 400px; }
-            .prism-art { font-size: 10px; transform: scale(1); }
-            #binary-grid { display: none; }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
 
-    <aside class="sidebar-left"></aside>
+  <body>
+    <div class="scanlines"></div>
+    <div class="noise-overlay"></div>
+
+    <div id="phi-logo-fixed"></div>
+
+    <aside class="sidebar sidebar-left" id="sb-left"></aside>
+
     <main class="main-content">
-        <div id="terminal-output"></div>
+      <div id="terminal-output" class="centered"></div>
     </main>
-    <aside class="sidebar-right"></aside>
+
+    <aside class="sidebar sidebar-right" id="sb-right"></aside>
 
     <script>
-        // --- 1. MÓDULOS DE CONTENIDO ---
-        const modules = {
-            about: `
-                <section class="fade-in module-content">
-                    <span class="com">// bio loaded successfully</span><br><br>
-                    <p><span class="kw">>></span> cat profile.txt</p>
-                    <br>
-                    <p>systems engineering student.</p>
-                    <p>i see the world through a prism: breaking down complex problems into fundamental components.</p>
-                    <br>
-                    <p>specializing in robust backend systems, data flow architectures, and critical statistical analysis.</p>
-                </section>
+      /* ========== ASCII AUTO-PORTRAIT (TU CARA) ========== */
+      const ASCII_ME = String.raw`
+.....................................................................................................
+..............................=*##*****+=-..........................................................
+...........................=*###%***#***##*+**:.....................................................
+........................:#%###%%%#**#**#%#*#%##%%*-.................................................
+......................=#%%%%%%###%%####***#%#%%##%%#-...............................................
+.....................#%@@@%#%%%%####%%%#***+*%%@@%%%%%*.............................................
+...................:%@@%%%%%%%%%%%%%%#%%##*++*######%%%#............................................
+..................:%%@@%%%@@@@@@@@@%%%%*+*%%#******###%%:...........................................
+..................%%%@%%@@@@@@@@@@@%%#%#**=*#%%%%%%%#%%%*...........................................
+.................+%%%@@@@@@@@@@@@%%%%%#%##******#%***%@%#-..........................................
+.................%%%%@@@@@@@@@@@@@@@%%%**+***+++++#*+*##%#..........................................
+................-%%%@@@@@@@@@@@@@@@%%#++====-----=**##**##..........................................
+................-%%%@@%%%@@@@@@@@@%#++==---::::---+*#%#**+..........................................
+................=%%%@%%####%%%%##*****+--:::::::---*##***:..........................................
+.................%%%%#########****+==-----------:---=*++#-..........................................
+.................=%%#**#######***+**+=+*#%##**+--:---+++*:..........................................
+..................%%**%%%%%%%%##*****++*****=---=----+++*...........................................
+..................=%**############*++***#####+===----++----.........................................
+...................%***##%%%%%%%%#=-:=*#%##*+--:-::--==--+=.........................................
+...................#*#####%%#%%%#*--::---+**=---::------:==.........................................
+...................#**###########*--::::--------::----:+=::.........................................
+...................#**##########+=---::-=*+===--:::-----=-..........................................
+...................+**####**####*==---:::=##***=--------:-..........................................
+....................#*##*++######**+==+==-*####*+-----::::..........................................
+....................#*#############**#*=-::-*###*=----=--...........................................
+....................-**##############+-----:-*###=----..............................................
+.....................****###########**++**#%%%##*=----..............................................
+......................+#**##%@%#####*++---+---*#+----:..............................................
+......................-*#*###%%%##*+=-+=-::----=----::..............................................
+.......................-*#########*++++==-------==--::..............................................
+........................-##########*****=--------=-:::..............................................
+..........................############+=----:---=--:::..............................................
+...........................*#######+----::::---==--::::.............................................
+............................*#####*+===------++=---::::::.:.........................................
+............................+########***++=+*=-----:::::::++++++-:..................................
+............................:############**=-------::::::+**++++++++++==-...........................
+.............................*#########**+----------::::***+++++++++++++++++++-.....................
+............................-*########**+==--==-------+***++++++++++************++++=--.............
+.........................+++**#########***+=====----+****+++++++++********************+++-..........
+.....................:#%%#***#######*******+++==-=*****++++++++++***********************+++=........
+....................+%%%@%#**#######************#***++++++++++***************************++++-......
+...............:%%%#@%%%@@@%##########****#####******+++++********************************+++++.....
+.............+%%%%%@%%%%%%@@@@@@@@@@%#########***************************#******#***********++++....
+.........=#%%%%%%%%%%%%%%%%%%@@@@%####***********************************##*****#%***********++++...
+......=%%%@@%%%%%%%%%%@@@@@@@@@#*****************************************##*+***%%*************+++..
+.....%@@@@@@@@@@@@@@@@@@@@@@%#######***************************************%%**#%%**#***********++-.
+....%@@@@@@@@@@@@@@@@@@@@@@#########****************************************%@**%@**#*************+:
+...+@@@@@@@@@@@@@@@@@@@@@############****************************************#@##@##*************#*=
+...%@@@@@@@@@@@@@@@@@@@%################**#************************************@#%#%**######*****##*
+...@@@@@@@@@@@@@@@@@@%######################***********************************#@*#%**########***###
+..:@@@@@@@@@@@@@@@@%###########################*********************************@%#@**#########**###
+..-@@@@@@@@@@@@@@%##############################********************************%@%@#*#%%######**##%
+..=@@@@@@@@@@@@@%###########**###################*********
+`;
+
+      /* ========== Φ MAPS ========== */
+
+      // Φ grande (intro) estilo "sacred geometry" pero con noise
+      const phiBigMap = [
+        "........OOOOOOOOOOO........",
+        ".....OOO.........OOO.......",
+        "...OO...............OO.....",
+        "..O.................O......",
+        ".O......IIIIIIIII....O.....",
+        "O.......IIIIIIIII.....O....",
+        "O.......IIIIIIIII.....O....",
+        ".O......IIIIIIIII....O.....",
+        "..O.................O......",
+        "...OO...............OO.....",
+        ".....OOO.........OOO.......",
+        "........OOOOOOOOOOO........",
+      ];
+
+      // Φ chico logo fijo
+      const phiLogoSmallMap = [
+        "..OOOOOOO..",
+        ".OO.....OO.",
+        "O.........O",
+        "O...III...O",
+        "O...III...O",
+        "O...III...O",
+        "O.........O",
+        ".OO.....OO.",
+        "..OOOOOOO..",
+      ];
+
+      const noiseChars = [".", ":", "*", "`", "-", "="];
+
+      /* ========== DATA (TEXTOS) ========== */
+
+      const Data = {
+        i18n: {
+          en: {
+            nav_h: "// navigation",
+            sys_h: "// system_info",
+            debug_h: "// debug_console",
+            mem_h: "// heap_memory",
+            opts: {
+              about: "01. about_me",
+              stack: "02. tech_stack",
+              proj: "03. projects",
+              contact: "04. contact",
+              back: "[ return_home ]",
+            },
+            sys: {
+              user: "user:",
+              status: "status:",
+              val: "online",
+              uptime: "uptime:",
+            },
+          },
+          es: {
+            nav_h: "// navegación",
+            sys_h: "// info_sistema",
+            debug_h: "// consola_debug",
+            mem_h: "// memoria_heap",
+            opts: {
+              about: "01. sobre_mí",
+              stack: "02. tecnologías",
+              proj: "03. proyectos",
+              contact: "04. contacto",
+              back: "[ volver_inicio ]",
+            },
+            sys: {
+              user: "usuario:",
+              status: "estado:",
+              val: "en línea",
+              uptime: "tiempo:",
+            },
+          },
+        },
+
+        modules: {
+          about: {
+            en: `
+<p><span style="color:var(--alg-green)">>></span> cat bio.txt</p>
+<pre id="ascii-me"></pre>
+
+<br>
+
+<p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
+<pre id="ascii-bio">
+systems engineering student.
+obsessed with clean architecture.
+data-flow oriented mindset.
+</pre>
             `,
-            stack: `
-                <section class="fade-in module-content">
-                    <span class="com">// tech stack analysis</span><br><br>
-                    <p><span class="kw">>></span> cat skills.json</p>
-                    <pre>
-{
-  <span class="str">"core"</span>: [<span class="str">"java"</span>, <span class="str">"python"</span>, <span class="str">"sql"</span>],
-  <span class="str">"data_integrity"</span>: <span class="str">"acid compliant systems"</span>,
-  <span class="str">"workflow"</span>: <span class="str">"docker / git / ci/cd"</span>
-}</pre>
-                </section>
+            es: `
+<p><span style="color:var(--alg-green)">>></span> cat bio.txt</p>
+<pre id="ascii-me"></pre>
+
+<br>
+
+<p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
+<pre id="ascii-bio">
+estudiante de ingeniería en sistemas.
+obsesionado con la arquitectura limpia.
+orientado al flujo de datos y la eficiencia.
+</pre>
             `,
-            projects: `
-                <section class="fade-in module-content">
-                    <span class="com">// retrieving repositories...</span><br><br>
-                    <p><span class="kw">>></span> ls -la ./projects/</p>
-                    <br>
-                    <div style="margin-bottom: 20px;">
-                        <span class="kw">const</span> <span class="fn">refraction_engine</span> = {<br>
-                        &nbsp;&nbsp;<span class="str">"type"</span>: <span class="str">"realtime_data_pipeline"</span>,<br>
-                        &nbsp;&nbsp;<span class="str">"status"</span>: <span class="str">"deployed"</span><br>
-                        }; <a href="#">[ view_source ]</a>
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <span class="kw">const</span> <span class="fn">spectrum_analyzer</span> = {<br>
-                        &nbsp;&nbsp;<span class="str">"type"</span>: <span class="str">"python_statistical_model"</span>,<br>
-                        &nbsp;&nbsp;<span class="str">"desc"</span>: <span class="str">"complex distribution mapping"</span><br>
-                        }; <a href="#">[ view_source ]</a>
-                    </div>
-                </section>
+          },
+
+          stack: {
+            en: `<pre>{ "core": ["java","python","sql"], "paradigm": "ACID / REST" }</pre>`,
+            es: `<pre>{ "núcleo": ["java","python","sql"], "paradigma": "ACID / REST" }</pre>`,
+          },
+
+          projects: {
+            en: `
+<strong>[ transaction_manager ]</strong>
+<p>sql concurrency control engine.</p><br>
+
+<strong>[ stats_engine ]</strong>
+<p>python-based distributions and statistics.</p>
             `,
-            contact: `
-                <section class="fade-in module-content">
-                    <span class="com">// opening secure channel...</span><br><br>
-                    <p><span class="kw">>></span> ./connect.sh</p>
-                    <br>
-                    <ul>
-                        <li><span class="kw">email:</span> <a href="mailto:you@mail.com">you@mail.com</a></li>
-                        <li><span class="kw">github:</span> <a href="#">github.com/user</a></li>
-                    </ul>
-                </section>
-            `
-        };
+            es: `
+<strong>[ gestor_transacciones ]</strong>
+<p>motor de concurrencia sql.</p><br>
 
-        const outputDiv = document.getElementById('terminal-output');
-        let prismTypewriterInterval; // Para la animación de escritura
-        let prismGlitchInterval;     // Para la animación de glitch
+<strong>[ motor_estadístico ]</strong>
+<p>modelos y distribuciones estadísticas.</p>
+            `,
+          },
 
-        // --- 2. MAPA DEL PRISMA DE ALTA FIDELIDAD ---
-        // ' ' = Vacío
-        // '_' = Borde superior/inferior
-        // '/' = Borde diagonal izquierdo
-        // '\' = Borde diagonal derecho
-        // '|' = Borde vertical (para la base si es necesario)
-        // 'I' = Interior (Noise)
-        // 'L' = Haz de Entrada
-        // 'R' = Haz de Salida
-        
-        const prismMap = [
-            "                                _ _                                    ",
-            "                              _/   \\_                                  ",
-            "                            _/       \\_                                ",
-            "                          _/           \\_                              ",
-            "                        _/               \\_                            ",
-            "                      _/                   \\_                          ",
-            "                    _/                       \\_                        ",
-            "                  _/                           \\_                      ",
-            "                _/       I I I I I I I         /                       ",
-            "              _/         I I I I I I I       /                         ",
-            "            _/           I I I I I I I     /                           ",
-            "          _/             I I I I I I I   /                             ",
-            "        _/               I I I I I I I /                               ",
-            "      _/                 I I I I I I I/                                ",
-            "    _/                   I I I I I I I\\                               ",
-            "   | LLLLLLLLLLLLLLL     I I I I I I I \\ RRRRRRRRRRRRRRRRRRR           ",
-            "   |                 _ _ _ _ _ _ _ _ _ _\\_                            ",
-            "   |               _/                     \\_                           ",
-            "   |_ _ _ _ _ _ _ _/                         \\_ _ _ _ _ _ _ _ _ _ _ _ _ "
-        ];
-        
-        const noiseChars = ['.', ':', '~', '^', '*']; // Caracteres para el ruido interno
+          contact: {
+            en: `
+email: <a href="mailto:mail@me.com">mail@me.com</a><br>
+github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
+            `,
+            es: `
+email: <a href="mailto:mail@me.com">mail@me.com</a><br>
+github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
+            `,
+          },
+        },
+      };
 
-        // Función para renderizar el prisma completo sin animación
-        function renderPrismStatic() {
-            let html = '';
-            for (let r = 0; r < prismMap.length; r++) {
-                let line = '';
-                for (let c = 0; c < prismMap[r].length; c++) {
-                    const charType = prismMap[r][c];
-                    if (charType === ' ') line += ' ';
-                    else if (charType === '_') line += `<span class="tri-border">_</span>`;
-                    else if (charType === '/') line += `<span class="tri-border">/</span>`;
-                    else if (charType === '\\') line += `<span class="tri-border">\\</span>`;
-                    else if (charType === '|') line += `<span class="tri-border">|</span>`;
-                    else if (charType === 'I') line += `<span class="tri-noise">${noiseChars[Math.floor(Math.random() * noiseChars.length)]}</span>`;
-                    else if (charType === 'L') line += `<span class="beam-in">-</span>`;
-                    else if (charType === 'R') line += `<span class="beam-out">=</span>`;
+      /* ========== APP CORE ========== */
+
+      const App = {
+        state: {
+          lang: "es",
+          theme: "dark",
+          booted: false,
+          uptime: 0,
+        },
+        intervals: [],
+        audioCtx: null,
+        audioEnabled: false,
+
+        init() {
+          this.renderIntro();
+          this.startPhiIntroLoop();
+          this.setupAudio();
+          setInterval(() => {
+            if (this.state.booted) {
+              this.state.uptime++;
+              const el = document.getElementById("uptime");
+              if (el) el.textContent = this.state.uptime + "s";
+            }
+          }, 1000);
+        },
+
+        /* ---------- AUDIO ---------- */
+        setupAudio() {
+          const unlock = () => {
+            if (this.audioEnabled) return;
+            try {
+              this.audioCtx = new (window.AudioContext ||
+                window.webkitAudioContext)();
+              this.audioEnabled = true;
+            } catch (e) {
+              this.audioEnabled = false;
+            }
+            document.removeEventListener("click", unlock);
+          };
+          document.addEventListener("click", unlock, { once: true });
+        },
+
+        playKeySound() {
+          if (!this.audioEnabled || !this.audioCtx) return;
+          const ctx = this.audioCtx;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const now = ctx.currentTime;
+          const freq = 260 + Math.random() * 140;
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        },
+
+        /* ---------- INTRO ---------- */
+        renderIntro() {
+          const out = document.getElementById("terminal-output");
+          out.classList.add("centered");
+          const langBtn = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
+          const themeBtn =
+            this.state.theme === "dark" ? "[ light_mode ]" : "[ dark_mode ]";
+
+          out.innerHTML = `
+            <div class="intro-wrapper">
+              <div id="phi-art" class="phi-art" onclick="App.bootSystem()"></div>
+              <div class="controls-container">
+                <button class="toggle-btn" onclick="App.toggleLang()">${langBtn}</button>
+                <button class="toggle-btn" onclick="App.toggleTheme()">${themeBtn}</button>
+              </div>
+            </div>
+          `;
+        },
+
+        startPhiIntroLoop() {
+          const id = setInterval(() => this.updatePhiIntroFrame(), 120);
+          this.intervals.push(id);
+        },
+
+        updatePhiIntroFrame() {
+          const target = document.getElementById("phi-art");
+          if (!target) return;
+          let html = "";
+          phiBigMap.forEach((row) => {
+            let line = "";
+            for (let c of row) {
+              if (c === "O") {
+                line += `<span style="color:var(--alg-green);text-shadow:0 0 8px var(--alg-green)">█</span>`;
+              } else if (c === "I") {
+                const glow =
+                  Math.random() < 0.5 ? "var(--alg-green)" : "var(--alg-red)";
+                line += `<span style="color:${glow};text-shadow:0 0 8px ${glow}">█</span>`;
+              } else {
+                const useNoise = Math.random() < 0.12;
+                if (useNoise) {
+                  const n =
+                    noiseChars[Math.floor(Math.random() * noiseChars.length)];
+                  line += `<span style="color:var(--text-dim);opacity:.6">${n}</span>`;
+                } else {
+                  line += "&nbsp;";
                 }
-                html += line + '\n';
+              }
             }
-            return html;
-        }
+            html += line + "<br>";
+          });
+          target.innerHTML = html;
+        },
 
-        let currentPrismHTML = ''; // Almacena el HTML del prisma conforme se escribe
+        clearIntervals() {
+          this.intervals.forEach((id) => clearInterval(id));
+          this.intervals = [];
+        },
 
-        // Función para "escribir" el prisma carácter por carácter
-        function typePrism() {
-            outputDiv.innerHTML = `
-                <div class="intro-container" onclick="loadModule('about')">
-                    <div id="prism-target" class="prism-art"></div>
-                    <div id="click-prompt" class="click-prompt"></div>
-                </div>
-            `;
-            
-            const target = document.getElementById('prism-target');
-            const clickPrompt = document.getElementById('click-prompt');
-            let charIndex = 0;
-            currentPrismHTML = '';
-            
-            // Limpiamos intervalos previos
-            clearInterval(prismTypewriterInterval);
-            clearInterval(prismGlitchInterval);
+        /* ---------- BOOT ---------- */
+        bootSystem() {
+          if (this.state.booted) return;
+          this.clearIntervals();
+          this.state.booted = true;
+          this.state.uptime = 0;
 
-            // Tipo de animación para escribir
-            const typingSpeed = 5; // Velocidad de escritura (ms por caracter)
+          const out = document.getElementById("terminal-output");
+          out.classList.remove("centered");
+          out.innerHTML = "";
 
-            prismTypewriterInterval = setInterval(() => {
-                if (charIndex >= prismMap.join('\n').length) {
-                    clearInterval(prismTypewriterInterval);
-                    // Una vez escrito, activamos el glitch y el prompt
-                    prismGlitchInterval = setInterval(animatePrismGlitch, 200); // Glitch un poco más rápido
-                    clickPrompt.innerHTML = '[ click_prism_to_enter ]';
-                    clickPrompt.classList.add('active'); // Mostrar el prompt con fade-in
-                    return;
+          const sbLeft = document.getElementById("sb-left");
+          const sbRight = document.getElementById("sb-right");
+          sbLeft.innerHTML = "";
+          sbRight.innerHTML = "";
+          sbLeft.style.opacity = "1";
+          sbRight.style.opacity = "1";
+
+          const t = Data.i18n[this.state.lang];
+
+          const leftHTML = `
+<div class="ascii-header">${t.nav_h}</div>
+<nav class="corruptible-block">
+  <button class="nav-btn" onclick="App.loadModule('about')">${t.opts.about}</button>
+  <button class="nav-btn" onclick="App.loadModule('stack')">${t.opts.stack}</button>
+  <button class="nav-btn" onclick="App.loadModule('projects')">${t.opts.proj}</button>
+  <button class="nav-btn" onclick="App.loadModule('contact')">${t.opts.contact}</button>
+  <br>
+  <button class="nav-btn" onclick="App.resetToIntro()">${t.opts.back}</button>
+</nav>
+          `;
+
+          const rightHTML = `
+<div class="ascii-header">${t.sys_h}</div>
+<div class="corruptible-block">
+  ${t.sys.user} guest<br>
+  ${t.sys.status} <span style="color:var(--alg-green)">${t.sys.val}</span><br>
+  ${t.sys.uptime} <span id="uptime">0s</span>
+</div>
+<br>
+<div class="ascii-header">${t.mem_h}</div>
+<div id="heap-dump" style="font-size:11px;color:var(--alg-green);opacity:.7;"></div>
+<br>
+<div class="ascii-header">${t.debug_h}</div>
+<div id="debug-log" style="font-size:11px;max-height:160px;overflow:hidden;"></div>
+          `;
+
+          // sidebars
+          this.typeHTML(sbLeft, leftHTML, 2);
+          this.typeHTML(sbRight, rightHTML, 2).then(() => {
+            this.startHeapDump();
+          });
+
+          // boot log
+          const bootLog =
+            this.state.lang === "en"
+              ? `
+<span style="color:var(--alg-green)">> starting system...</span>
+loading kernel modules [ ok ]
+initializing runtime environment [ ok ]
+checking memory map [ ok ]
+mounting root filesystem [ ok ]
+starting user-session [ ok ]
+
+<span style="color:var(--alg-green)">system ready.</span>
+          `
+              : `
+<span style="color:var(--alg-green)">> starting system...</span>
+cargando módulos del kernel [ ok ]
+inicializando entorno de ejecución [ ok ]
+verificando mapa de memoria [ ok ]
+montando sistema de archivos raíz [ ok ]
+iniciando sesión de usuario [ ok ]
+
+<span style="color:var(--alg-green)">system ready.</span>
+          `;
+
+          this.typeHTML(out, bootLog, 8).then(() => {
+            this.logEvent("SYSTEM_READY");
+            setTimeout(() => this.loadModule("about"), 400);
+          });
+
+          // mostrar logo Φ pequeño
+          const logo = document.getElementById("phi-logo-fixed");
+          logo.style.display = "block";
+          this.startPhiLogoLoop();
+        },
+
+        resetToIntro() {
+          this.clearIntervals();
+          this.state.booted = false;
+          const sbLeft = document.getElementById("sb-left");
+          const sbRight = document.getElementById("sb-right");
+          sbLeft.style.opacity = "0";
+          sbRight.style.opacity = "0";
+          sbLeft.innerHTML = "";
+          sbRight.innerHTML = "";
+
+          const logo = document.getElementById("phi-logo-fixed");
+          logo.style.display = "none";
+          logo.innerHTML = "";
+
+          const out = document.getElementById("terminal-output");
+          out.innerHTML = "";
+          out.classList.add("centered");
+          this.renderIntro();
+          this.startPhiIntroLoop();
+        },
+
+        /* ---------- TYPEWRITER ---------- */
+        async typeHTML(element, html, speed) {
+          return new Promise(async (resolve) => {
+            element.innerHTML = "";
+            const cursor = document.createElement("span");
+            cursor.className = "typing-cursor";
+            element.appendChild(cursor);
+
+            const parts = html.split(/(<[^>]+>)/g).filter((p) => p !== "");
+
+            for (let part of parts) {
+              if (part.startsWith("<") && part.endsWith(">")) {
+                cursor.insertAdjacentHTML("beforebegin", part);
+              } else {
+                for (let c of part) {
+                  const useGlitch = Math.random() < 0.02 && c !== " ";
+                  const chunk = useGlitch
+                    ? `<span class="glitch-char">${c}</span>`
+                    : c;
+
+                  cursor.insertAdjacentHTML("beforebegin", chunk);
+                  this.playKeySound();
+                  await new Promise((r) => setTimeout(r, speed));
                 }
-
-                const fullPrismString = prismMap.join('\n');
-                const charToAdd = fullPrismString[charIndex];
-                
-                // Determinamos la clase para el carácter
-                let charHTML = '';
-                if (charToAdd === ' ') charHTML = ' ';
-                else if (charToAdd === '_') charHTML = `<span class="tri-border">_</span>`;
-                else if (charToAdd === '/') charHTML = `<span class="tri-border">/</span>`;
-                else if (charToAdd === '\\') charHTML = `<span class="tri-border">\\</span>`;
-                else if (charToAdd === '|') charHTML = `<span class="tri-border">|</span>`;
-                else if (charToAdd === 'I') charHTML = `<span class="tri-noise">${noiseChars[Math.floor(Math.random() * noiseChars.length)]}</span>`;
-                else if (charToAdd === 'L') charHTML = `<span class="beam-in">-</span>`;
-                else if (charToAdd === 'R') charHTML = `<span class="beam-out">=</span>`;
-                else if (charToAdd === '\n') charHTML = '\n'; // Nuevas líneas
-
-                currentPrismHTML += charHTML;
-                target.innerHTML = currentPrismHTML;
-                
-                charIndex++;
-            }, typingSpeed);
-        }
-
-        // Animación de glitch (solo el interior)
-        function animatePrismGlitch() {
-            const target = document.getElementById('prism-target');
-            if(!target || !currentPrismHTML) {
-                clearInterval(prismGlitchInterval); // Detener si no existe
-                return;
+              }
             }
+            cursor.remove();
+            resolve(true);
+          });
+        },
 
-            let newHTML = '';
-            let charPos = 0;
-            for(let row of prismMap) {
-                for(let charType of row) {
-                    if(charType === 'I') {
-                        // Reemplaza un carácter de ruido existente
-                        const randChar = noiseChars[Math.floor(Math.random() * noiseChars.length)];
-                        newHTML += `<span class="tri-noise">${randChar}</span>`;
-                        // Avanza el índice para el HTML original
-                        charPos += currentPrismHTML.substring(charPos).indexOf('</span>') + 7;
-                    } else {
-                        // Copia el HTML original hasta el siguiente ruido o fin de elemento
-                        const nextNoiseIndex = currentPrismHTML.substring(charPos).indexOf('<span class="tri-noise">');
-                        if(nextNoiseIndex !== -1) {
-                            newHTML += currentPrismHTML.substring(charPos, charPos + nextNoiseIndex);
-                            charPos += nextNoiseIndex;
-                        } else {
-                            newHTML += currentPrismHTML.substring(charPos);
-                            charPos = currentPrismHTML.length;
-                        }
-                    }
+        /* ---------- MODULES ---------- */
+        loadModule(key) {
+          const out = document.getElementById("terminal-output");
+          const content = Data.modules[key][this.state.lang];
+          this.typeHTML(out, content, 4).then(() => {
+            if (key === "about") this.injectASCII();
+            this.logEvent(`MODULE_LOAD: ${key.toUpperCase()}`);
+          });
+        },
+
+        injectASCII() {
+          const asciiEl = document.getElementById("ascii-me");
+          if (!asciiEl) return;
+          asciiEl.textContent = "";
+          const lines = ASCII_ME.split("\n");
+          let i = 0;
+          const interval = setInterval(() => {
+            if (i >= lines.length) {
+              clearInterval(interval);
+              return;
+            }
+            asciiEl.textContent += lines[i] + "\n";
+            i++;
+          }, 8);
+          this.intervals.push(interval);
+        },
+
+        /* ---------- HEAP + LOG ---------- */
+        startHeapDump() {
+          const el = document.getElementById("heap-dump");
+          if (!el) return;
+          const gen = () => {
+            const addr =
+              "0x" +
+              Math.floor(Math.random() * 65535)
+                .toString(16)
+                .toUpperCase()
+                .padStart(4, "0");
+            const bytes = Array.from({ length: 4 }, () =>
+              Math.floor(Math.random() * 255)
+                .toString(16)
+                .toUpperCase()
+                .padStart(2, "0")
+            ).join(" ");
+            return `${addr} : ${bytes}`;
+          };
+          el.innerHTML = "";
+          for (let i = 0; i < 6; i++) {
+            const d = document.createElement("div");
+            d.textContent = gen();
+            el.appendChild(d);
+          }
+          const id = setInterval(() => {
+            if (!el.children.length) return;
+            const r = Math.floor(Math.random() * el.children.length);
+            el.children[r].textContent = gen();
+          }, 180);
+          this.intervals.push(id);
+        },
+
+        logEvent(msg) {
+          const logContainer = document.getElementById("debug-log");
+          if (!logContainer) return;
+          const time = new Date()
+            .toLocaleTimeString("en-US", { hour12: false })
+            .split(" ")[0];
+          const entry = document.createElement("div");
+          entry.textContent = `[${time}] ${msg}`;
+          logContainer.prepend(entry);
+          if (logContainer.children.length > 8) {
+            logContainer.lastChild.remove();
+          }
+        },
+
+        /* ---------- Φ LOGO PEQUEÑO ---------- */
+        startPhiLogoLoop() {
+          const id = setInterval(() => {
+            const target = document.getElementById("phi-logo-fixed");
+            if (!target) return;
+            let html = "";
+            phiLogoSmallMap.forEach((row) => {
+              let line = "";
+              for (let c of row) {
+                if (c === "O" || c === "I") {
+                  line += `<span style="color:var(--alg-green)">█</span>`;
+                } else {
+                  line += "&nbsp;";
                 }
-                newHTML += '\n'; // Mantener nuevas líneas
-            }
-            target.innerHTML = newHTML;
-        }
+              }
+              html += line + "<br>";
+            });
+            target.innerHTML = html;
+          }, 220);
+          this.intervals.push(id);
+        },
 
+        /* ---------- TOGGLES ---------- */
+        toggleLang() {
+          this.state.lang = this.state.lang === "en" ? "es" : "en";
+          if (this.state.booted) {
+            this.bootSystem();
+          } else {
+            this.renderIntro();
+          }
+        },
 
-        // --- 3. FUNCIONES GENERALES ---
-        function loadModule(moduleName) {
-            clearInterval(prismTypewriterInterval); // Detener escritura
-            clearInterval(prismGlitchInterval);     // Detener glitch
-            outputDiv.innerHTML = '';
-            
-            // Ocultar sidebars antes de mostrar contenido
-            document.body.classList.remove('loaded');
+        toggleTheme() {
+          this.state.theme = this.state.theme === "dark" ? "light" : "dark";
+          document.body.classList.toggle("light-mode");
+          if (!this.state.booted) this.renderIntro();
+        },
+      };
 
-            // Cargar contenido en el main
-            const moduleContentContainer = document.createElement('div');
-            moduleContentContainer.className = 'module-content';
-            moduleContentContainer.innerHTML = modules[moduleName];
-            outputDiv.appendChild(moduleContentContainer);
-
-            // Mostrar sidebars con delay
-            setTimeout(() => {
-                document.body.classList.add('loaded');
-            }, 100); // Pequeño delay para la transición
-        }
-
-        // Inicializar Sidebars
-        function initSidebars() {
-            document.querySelector('.sidebar-left').innerHTML = `
-                <div>
-                    <div id="ascii-anim" style="color: var(--alg-red); font-weight: bold; margin-bottom: 30px; white-space: pre; line-height: 12px;"></div>
-                    <div style="margin-bottom: 30px;">
-                        <span class="kw">sys_status:</span> online<br>
-                        <span class="kw">user:</span> guest
-                    </div>
-                    <nav>
-                        <span class="com">// modules</span><br>
-                        <button onclick="loadModule('about')">01. about_me</button>
-                        <button onclick="loadModule('stack')">02. tech_stack</button>
-                        <button onclick="loadModule('projects')">03. projects</button>
-                        <button onclick="loadModule('contact')">04. contact</button>
-                        <br>
-                        <button onclick="typePrism()">[ return_home ]</button>
-                    </nav>
-                </div>
-                <div style="font-size: 12px; color: var(--text-dim);">
-                    <button onclick="toggleTheme()" style="margin-bottom: 20px;">[ light_mode ]</button>
-                    <span id="clock">--:--:--</span>
-                </div>
-            `;
-            document.querySelector('.sidebar-right').innerHTML = `
-                <div style="margin-bottom: 10px; color: var(--alg-green);">
-                    <span class="com">// data_stream</span>
-                </div>
-                <div id="binary-grid" style="font-size: 12px; line-height: 14px; color: var(--alg-green); opacity: 0.7; word-break: break-all;"></div>
-            `;
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const btn = document.querySelector("button[onclick='toggleTheme()']");
-            btn.innerText = document.body.classList.contains('light-mode') ? "[ dark_mode ]" : "[ light_mode ]";
-        }
-
-        // Sidebar Anims
-        const radarFrames = ["  .  \n ... \n.....", "  |  \n -+- \n  |  ", "  /  \n  +  \n  /  ", "  -  \n -+- \n  -  ", "  \\  \n  +  \n  \\  "];
-        let frameIndex = 0;
-        setInterval(() => {
-            const el = document.getElementById('ascii-anim');
-            if(el) el.innerText = radarFrames[frameIndex];
-            frameIndex = (frameIndex + 1) % radarFrames.length;
-        }, 200);
-
-        const binaryGrid = document.getElementById('binary-grid');
-        let binaryHTML = '';
-        for(let r=0; r<30; r++) {
-            binaryHTML += '<div>';
-            for(let c=0; c<12; c++) {
-                binaryHTML += `<span id="bit-${r}-${c}">0</span> `;
-            }
-            binaryHTML += '</div>';
-        }
-        // Solo inyectar si el elemento existe (estará vacío al inicio)
-        if(binaryGrid) binaryGrid.innerHTML = binaryHTML; 
-
-        setInterval(() => {
-            // Solo animar si los sidebars están visibles (es decir, body.loaded)
-            if(!document.body.classList.contains('loaded')) return;
-
-            for(let k=0; k<10; k++) {
-                const r = Math.floor(Math.random() * 30);
-                const c = Math.floor(Math.random() * 12);
-                const bit = document.getElementById(`bit-${r}-${c}`);
-                if(bit) {
-                    bit.innerText = Math.random() > 0.5 ? '1' : '0';
-                    bit.style.color = Math.random() > 0.9 ? 'var(--binary-bright)' : 'var(--binary-dim)';
-                }
-            }
-        }, 100);
-
-        setInterval(() => {
-            const clock = document.getElementById('clock');
-            // Solo actualizar si el reloj está visible (sidebars cargados)
-            if(clock && document.body.classList.contains('loaded')) {
-                clock.innerText = new Date().toLocaleTimeString('en-US', {hour12:false});
-            }
-        }, 1000);
-
-        // --- INICIO DE LA APLICACIÓN ---
-        window.onload = () => {
-            initSidebars(); // Inicializamos el contenido de los sidebars
-            typePrism();    // Mostramos la animación de escritura del prisma
-        };
+      window.onload = () => App.init();
     </script>
-</body>
+  </body>
 </html>
