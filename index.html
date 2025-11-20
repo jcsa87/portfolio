@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>~/dev/portfolio</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- [ CONFIGURATION ] --- */
+        :root {
+            /* -- CORE COLORS (DEFAULT: DARK/BLACK) -- */
+            --bg-color: #000000;
+            --text-main: #e0e0e0;
+            --text-dim: #555555;
+            
+            /* -- ALGERIAN PALETTE -- */
+            --alg-green: #006233;
+            --alg-red: #D21034;
+            
+            /* -- SYNTAX HIGHLIGHTING -- */
+            --border-color: var(--alg-green);
+            --keyword: var(--alg-green);      /* import, const, function */
+            --function: var(--alg-red);       /* main(), render() */
+            --string: #ffffff;                /* "text" */
+            --comment: var(--text-dim);       /* // comments */
+            --bracket: var(--alg-red);
+            --cursor: var(--alg-red);
+        }
+
+        /* -- LIGHT MODE (OPTIONAL TOGGLE) -- */
+        body.light-mode {
+            --bg-color: #ffffff;
+            --text-main: #111111;
+            --text-dim: #888888;
+            --string: #333333;
+            /* Green and Red remain the same for identity */
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            height: 100vh; /* Full viewport height */
+            display: flex; /* The 3-column layout */
+            overflow: hidden;
+            text-transform: lowercase; /* Enforce lowercase everywhere */
+        }
+
+        /* --- LAYOUT COLUMNS --- */
+        
+        /* 1. LEFT SIDEBAR (Nav) */
+        .sidebar-left {
+            width: 260px;
+            border-right: 1px solid var(--border-color);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        /* 2. CENTER (Main Content) */
+        .main-content {
+            flex: 1; /* Takes remaining space */
+            padding: 50px 80px;
+            overflow-y: auto;
+            scrollbar-width: none; /* Hide scrollbar for cleaner look */
+        }
+        .main-content::-webkit-scrollbar { display: none; }
+
+        /* 3. RIGHT SIDEBAR (Status) */
+        .sidebar-right {
+            width: 240px;
+            border-left: 1px solid var(--border-color);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* --- TYPOGRAPHY & ELEMENTS --- */
+        a, button {
+            color: inherit;
+            text-decoration: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: inherit;
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            transition: color 0.2s;
+        }
+
+        a:hover, button:hover {
+            color: var(--string);
+        }
+        
+        a:hover::before, button:hover::before {
+            content: "[ "; color: var(--alg-red);
+        }
+        a:hover::after, button:hover::after {
+            content: " ]"; color: var(--alg-red);
+        }
+
+        .ascii-art {
+            color: var(--alg-red);
+            white-space: pre;
+            font-size: 10px;
+            line-height: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* Syntax Helpers */
+        .kw { color: var(--keyword); font-weight: 600; }
+        .fn { color: var(--function); }
+        .str { color: var(--string); }
+        .com { color: var(--comment); display: block; margin-top: 5px; font-style: italic;}
+        .op { color: var(--alg-red); } /* Operators like = or => */
+
+        /* Code Blocks */
+        pre {
+            padding: 20px 0;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+
+        /* Cursor */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: var(--cursor);
+            vertical-align: bottom;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Section spacing */
+        section { margin-bottom: 60px; }
+        
+        /* Mobile Response */
+        @media (max-width: 1000px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            .sidebar-left, .sidebar-right { width: 100%; height: auto; border: none; border-bottom: 1px dashed var(--border-color); }
+            .main-content { padding: 30px; }
+            .sidebar-right { display: none; /* Hide right bar on mobile to save space */ }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar-left">
+        <div>
+            <div class="ascii-art">
+       _..._
+     .::'   '.
+    :::       :
+    :::       :
+    `::.     .'
+      `':..-'
+            </div>
+            
+            <div style="margin-bottom: 40px;">
+                <span class="kw">const</span> <span class="str">user</span> <span class="op">=</span> <span class="str">"student"</span>;<br>
+                <span class="kw">let</span> <span class="str">status</span> <span class="op">=</span> <span class="str">"coding"</span>;
+            </div>
+
+            <nav>
+                <span class="com">// navigation module</span>
+                <br>
+                <button onclick="scrollToId('about')">./about_me</button>
+                <button onclick="scrollToId('stack')">./tech_stack</button>
+                <button onclick="scrollToId('projects')">./projects</button>
+                <button onclick="scrollToId('contact')">./contact_me</button>
+            </nav>
+        </div>
+
+        <div>
+            <button onclick="toggleTheme()">[ light_switch ]</button>
+        </div>
+    </aside>
+
+
+    <main class="main-content">
+        
+        <section id="intro">
+            <span class="kw">import</span> { <span class="str">backend_logic</span>, <span class="str">data_structures</span> } <span class="kw">from</span> <span class="str">'./systems_engineering'</span>;
+            <br><br>
+            <span class="kw">function</span> <span class="fn">init_portfolio</span>() {
+                <br>
+                <span class="str" id="typewriter"></span><span class="cursor"></span>
+                <br>
+            }
+        </section>
+
+        <div id="buffer" style="opacity: 0; transition: opacity 1.5s;">
+            
+            <section id="about">
+                <span class="com">// about me -------------------------</span>
+                <p><span class="kw">>></span> cat bio.txt</p>
+                <br>
+                <p>i am a systems engineering student focused on the invisible architecture of software.</p>
+                <br>
+                <p>while others look at the ui, i look at the database transactions, the statistical efficiency, and the query optimization. i build resilient backends.</p>
+            </section>
+
+            <section id="stack">
+                <span class="com">// technologies ---------------------</span>
+                <p><span class="kw">>></span> cat skills.json</p>
+                <pre>
+{
+  <span class="str">"languages"</span>: [<span class="str">"java"</span>, <span class="str">"python"</span>, <span class="str">"sql"</span>],
+  <span class="str">"core_concepts"</span>: [
+    <span class="str">"database transactions"</span>,
+    <span class="str">"statistical analysis"</span>,
+    <span class="str">"rest api design"</span>
+  ],
+  <span class="str">"tools"</span>: [<span class="str">"git"</span>, <span class="str">"docker"</span>, <span class="str">"linux"</span>]
+}</pre>
+            </section>
+
+            <section id="projects">
+                <span class="com">// highlighted projects -------------</span>
+                <p><span class="kw">>></span> ls -la ./repos/</p>
+                <br>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="fn">def</span> <span class="str">transaction_manager</span>():
+                    <span class="com"># sql concurrency handling and stored procedures</span>
+                    <a href="#">[ view_source_code ]</a>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="fn">def</span> <span class="str">stats_engine</span>():
+                    <span class="com"># python scripts for normal/binomial distribution</span>
+                    <a href="#">[ view_source_code ]</a>
+                </div>
+            </section>
+
+            <section id="contact">
+                <span class="com">// communication --------------------</span>
+                <p><span class="kw">>></span> ./send_signal.sh</p>
+                <br>
+                <ul>
+                    <li><span class="kw">email:</span> <a href="mailto:you@example.com" style="display:inline;">you@example.com</a></li>
+                    <li><span class="kw">github:</span> <a href="#" style="display:inline;">@yourusername</a></li>
+                </ul>
+            </section>
+            
+            <br><br>
+            <span class="com">/* end of buffer */</span>
+        </div>
+    </main>
+
+
+    <aside class="sidebar-right">
+        <div style="margin-bottom: 20px;">
+            <span class="com">// system status</span>
+            <br>
+            <div id="clock">--:--:--</div>
+            <br>
+            <span class="kw">ram:</span> 16gb [ok]<br>
+            <span class="kw">cpu:</span> idle [12%]<br>
+            <span class="kw">net:</span> connected
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <span class="com">// recent_logs</span>
+            <br>
+            <ul style="list-style: none;">
+                <li>> init_sequence... ok</li>
+                <li>> loading_assets... ok</li>
+                <li>> rendering_dom... ok</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: auto;">
+            <div class="ascii-art" style="font-size: 6px; opacity: 0.5;">
+  1010101010
+  0101010101
+  1010101010
+  0101010101
+            </div>
+            <span class="com">// v.1.0.4</span>
+        </div>
+    </aside>
+
+    <script>
+        // 1. CLOCK
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 2. TYPEWRITER
+        const text = "return \"welcome to my digital workspace.\";";
+        const display = document.getElementById('typewriter');
+        const buffer = document.getElementById('buffer');
+        let i = 0;
+
+        function type() {
+            if (i < text.length) {
+                display.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, 50);
+            } else {
+                buffer.style.opacity = 1;
+            }
+        }
+        window.onload = type;
+
+        // 3. SCROLL
+        function scrollToId(id) {
+            document.getElementById(id).scrollIntoView({behavior: 'smooth'});
+        }
+
+        // 4. THEME TOGGLE
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+    </script>
+
+</body>
+</html>
