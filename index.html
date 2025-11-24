@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>cmd_portfolio.exe</title>
@@ -12,6 +12,7 @@
         --text-dim: #aaaaaa;
         --accent-green: #00ff00;
         --accent-blue: #00a2ff;
+        --accent-military: #3a5f0b;
         --cursor: #ffffff;
       }
 
@@ -31,6 +32,43 @@
         color: var(--text-main);
         font-family: "Lucida Console", "Consolas", "Courier New", monospace;
         overflow: hidden;
+      }
+
+      .pane-body::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+      }
+
+      .pane-body {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+      }
+
+      @keyframes hintGlitch {
+        0% {
+          opacity: 0;
+          transform: translateX(0);
+        }
+        20% {
+          opacity: 1;
+          transform: translateX(-1px);
+        }
+        40% {
+          transform: translateX(1px);
+          filter: hue-rotate(30deg);
+        }
+        60% {
+          transform: translateX(-1px);
+          filter: hue-rotate(-20deg);
+        }
+        80% {
+          transform: translateX(1px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+          filter: none;
+        }
       }
 
       /* --- screens root --- */
@@ -57,6 +95,7 @@
         background: #000;
         padding: 12px 16px;
         overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 162, 255, 0.3);
       }
 
       #boot-output {
@@ -90,6 +129,7 @@
         background: #000;
         padding: 24px;
         text-align: center;
+        box-shadow: 0 0 12px rgba(58, 95, 11, 0.6);
       }
 
       .yin-art {
@@ -127,6 +167,7 @@
         flex-direction: column;
         border: 2px solid var(--accent-blue);
         background: #000;
+        box-shadow: 0 0 14px rgba(58, 95, 11, 0.5);
       }
 
       .term-titlebar {
@@ -137,6 +178,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        border-bottom: 1px solid var(--accent-military);
       }
 
       .term-titlebar span {
@@ -154,12 +196,13 @@
       }
 
       .pane {
-        border: 1px solid #004000;
+        border: 1px solid var(--accent-military);
         padding: 6px 7px;
         display: flex;
         flex-direction: column;
         overflow: hidden;
         background: #000;
+        box-shadow: inset 0 0 6px rgba(58, 95, 11, 0.4);
       }
 
       .pane-header {
@@ -190,6 +233,8 @@
         text-align: left;
         padding: 0;
         cursor: pointer;
+        display: block;
+        margin-bottom: 0;
       }
 
       .menu-item-btn:hover {
@@ -242,9 +287,10 @@
         color: var(--text-dim);
         display: flex;
         justify-content: space-between;
+        align-items: center;
       }
 
-      #console-log {
+      #device-info {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -255,10 +301,34 @@
         cursor: pointer;
       }
 
+      #volume-control {
+        margin-right: 10px;
+      }
+
+      .vol-btn {
+        cursor: pointer;
+        color: var(--accent-green);
+      }
+
+      .vol-btn:hover {
+        text-decoration: underline;
+      }
+
       @media (max-width: 900px) {
         .term-body {
           grid-template-columns: 1fr;
           grid-template-rows: auto auto;
+        }
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        50.01%,
+        100% {
+          opacity: 0;
         }
       }
     </style>
@@ -267,7 +337,73 @@
   <body>
     <div id="app-root"></div>
 
+    <!-- sonido suave de teclado -->
+    <audio
+      id="keySound"
+      src="https://assets.mixkit.co/sfx/preview/mixkit-soft-typing-on-computer-keyboard-2533.mp3"
+      preload="auto"
+    ></audio>
+
     <script>
+      /* ========= UBICACIÓN / TEMPERATURA ========= */
+      let deviceCity = "UNKNOWN";
+      let deviceTemp = "--";
+
+      function refreshDeviceInfoDom() {
+        const el = document.getElementById("device-info");
+        if (!el) return;
+        el.textContent = `DEVICE: ${deviceCity} | TEMP: ${deviceTemp}°C`;
+      }
+
+      (function initLocation() {
+        if (!navigator.geolocation) {
+          refreshDeviceInfoDom();
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            try {
+              const lat = pos.coords.latitude;
+              const lon = pos.coords.longitude;
+              const url =
+                "https://api.open-meteo.com/v1/forecast?latitude=" +
+                lat +
+                "&longitude=" +
+                lon +
+                "&current_weather=true";
+
+              const res = await fetch(url);
+              const data = await res.json();
+              const temp =
+                data &&
+                data.current_weather &&
+                typeof data.current_weather.temperature !== "undefined"
+                  ? data.current_weather.temperature
+                  : "--";
+
+              deviceCity = "Local";
+              deviceTemp = temp;
+              refreshDeviceInfoDom();
+            } catch (e) {
+              refreshDeviceInfoDom();
+            }
+          },
+          () => {
+            refreshDeviceInfoDom();
+          }
+        );
+      })();
+
+      /* ========= SONIDO TECLADO ========= */
+      const keySound = document.getElementById("keySound");
+
+      function playKey() {
+        if (!keySound) return;
+        keySound.currentTime = 0;
+        keySound.play();
+      }
+
       /* ========= CONSTANT ASCII ART ========= */
       const YINYANG_ART = String.raw`
                            __....__
@@ -294,68 +430,44 @@
                        "--...____...--"
 `;
 
-      const ASCII_ME = String.raw`
-                        .....................................................................................................
-                        ..............................=*##*****+=-..........................................................
-                        ...........................=*###%***#***##*+**:.....................................................
-                        ........................:#%###%%%#**#**#%#*#%##%%*-.................................................
-                        ......................=#%%%%%%###%%####***#%#%%##%%#-...............................................
-                        .....................#%@@@%#%%%%####%%%#***+*%%@@%%%%%*.............................................
-                        ...................:%@@%%%%%%%%%%%%%%#%%##*++*######%%%#............................................
-                        ..................:%%@@%%%@@@@@@@@@%%%%*+*%%#******###%%:...........................................
-                        ..................%%%@%%@@@@@@@@@@@%%#%#**=*#%%%%%%%#%%%*...........................................
-                        .................+%%%@@@@@@@@@@@@%%%%%#%##******#%***%@%#-..........................................
-                        .................%%%%@@@@@@@@@@@@@@@%%%**+***+++++#*+*##%#..........................................
-                        ................-%%%@@@@@@@@@@@@@@@%%#++====-----=**##**##..........................................
-                        ................-%%%@@%%%@@@@@@@@@%#++==---::::---+*#%#**+..........................................
-                        ................=%%%@%%####%%%%##*****+--:::::::---*##***:..........................................
-                        .................%%%%#########****+==-----------:---=*++#-..........................................
-                        .................=%%#**#######***+**+=+*#%##**+--:---+++*:..........................................
-                        ..................%%**%%%%%%%%##*****++*****=---=----+++*...........................................
-                        ..................=%**############*++***#####+===----++----.........................................
-                        ...................%***##%%%%%%%%#=-:=*#%##*+--:-::--==--+=.........................................
-                        ...................#*#####%%#%%%#*--::---+**=---::------:==.........................................
-                        ...................#**###########*--::::--------::----:+=::.........................................
-                        ...................#**##########+=---::-=*+===--:::-----=-..........................................
-                        ...................+**####**####*==---:::=##***=--------:-..........................................
-                        ....................#*##*++######**+==+==-*####*+-----::::..........................................
-                        ....................#*#############**#*=-::-*###*=----=--...........................................
-                        ....................-**##############+-----:-*###=----..............................................
-                        .....................****###########**++**#%%%##*=----..............................................
-                        ......................+#**##%@%#####*++---+---*#+----:..............................................
-                        ......................-*#*###%%%##*+=-+=-::----=----::..............................................
-                        .......................-*#########*++++==-------==--::..............................................
-                        ........................-##########*****=--------=-:::..............................................
-                        ..........................############+=----:---=--:::..............................................
-                        ...........................*#######+----::::---==--::::.............................................
-                        ............................*#####*+===------++=---::::::.:.........................................
-                        ............................+########***++=+*=-----:::::::++++++-:..................................
-                        ............................:############**=-------::::::+**++++++++++==-...........................
-                        .............................*#########**+----------::::***+++++++++++++++++++-.....................
-                        ............................-*########**+==--==-------+***++++++++++************++++=--.............
-                        .........................+++**#########***+=====----+****+++++++++********************+++-..........
-                        .....................:#%%#***#######*******+++==-=*****++++++++++***********************+++=........
-                        ....................+%%%@%#**#######************#***++++++++++***************************++++-......
-                        ...............:%%%#@%%%@@@%##########****#####******+++++********************************+++++.....
-                        .............+%%%%%@%%%%%%@@@@@@@@@@%#########***************************#******#***********++++....
-                        .........=#%%%%%%%%%%%%%%%%%%@@@@%####***********************************##*****#%***********++++...
-                        ......=%%%@@%%%%%%%%%%@@@@@@@@@#*****************************************##*+***%%*************+++..
-                        .....%@@@@@@@@@@@@@@@@@@@@@@%#######***************************************%%**#%%**#***********++-.
-                        ....%@@@@@@@@@@@@@@@@@@@@@@#########****************************************%@**%@**#*************+:
-                        ...+@@@@@@@@@@@@@@@@@@@@@############****************************************#@##@##*************#*=
-                        ...%@@@@@@@@@@@@@@@@@@@%################**#************************************@#%#%**######*****##*
-                        ...@@@@@@@@@@@@@@@@@@%######################***********************************#@*#%**########***###
-                        ..:@@@@@@@@@@@@@@@@%###########################*********************************@%#@**#########**###
-                        ..-@@@@@@@@@@@@@@%##############################********************************%@%@#*#%%######**##%
-                        ..=@@@@@@@@@@@@@%###########**###################*********
+      const ASCII_ME = String.raw`                                      
+ ******#***=   @@@@@@@@@@.   .=***************** 
+ ##***##*=  =@@@@#=:*%@@@@@@@:  =#*####**#****## 
+ *******: @@@@*@@%@@@@*#=%@@@@@% -************** 
+ ******= @@@*%@@@@@@#%@@@.===*@@@ ************** 
+ ****** *@@%@@@@@@@@%@@:+@@@@@@@@ -************* 
+ *#***= @@@@@@@@@@%@@@@@@@@#@%:@@@ *##**####**## 
+ *****: @@@@@@@@@@@@%--*=:..=@@*@@:*##**##***### 
+ *****:-@@@%*#@@@@*=%%.    =:%@@@= ************* 
+ *****= @@=======:==.:@@@@@@-.**@#:***#********* 
+ ****** %@:@@@@@%%@@@@@#%=**@=#@@+.*###***##**** 
+ *****#- @***%@@@@@ +@@@@@%#***@ @#+************ 
+ ******+ @@@@%@@@@@.:   .:+*#%*%@@+=************ 
+ ******* @@%@@@@@*.-==*@+:::=*%*%@-************* 
+ ******* @@@#.*@#@*--#*@@@@@=*%***=************* 
+ ###***#= @@@@@@@@@@@@   -@@**%@@#+******#****## 
+ ******** @@@%%**%@@%@@@@@@@+*@.:=************** 
+ ********: @@%@@@%%%:..   #@=@@:**************** 
+ *********- @@@*#@%+*%@%**+*@%%-***************# 
+ **********: @@@%%@@@@@#%*+%%*%*=**###***#****## 
+ ***********- :@%@@      =@@#*#@-.    :=**#***** 
+ ************= @@%@@@@@@@@%***#%**@@@%+      :+* 
+ ************+ .@@@@@@@@:=*###+::@@%@@@@@@@@@*   
+ *#*******:    %@%%%@%+=-*%*=::@@@%%%%%%%%@@@@@@:
+ ****#+.   @@@@@@@%#%@@@%*=.*@@@%#%%%%%%%%%%%@%% 
+ ***:   @@@@@@==*****=*%@@@@@%**#%%%%%%%%%%@%@%% 
+     @@@@@@%%@@@@@@@@@@@@@%%#%%%%%%%%%%%%%%@%%@% 
+ :@@@@@%%##%%@@@@+-=**#%#%%@%@@%@@%%%%%%%%#@@:%**
+@@@@@@@@@@@@@@@#*%@%%#%%%%%%%%%%%%%%%%%%%%#*@@#-*
+*@@@@@@@@@@@@#*%%%@%%%%%%%%%%%%%%%%%%%%%%%%#*=@%+
 `;
 
       const Data = {
         i18n: {
           es: {
             bootLines: [
-              "Microsoft Windows XP [Versión 5.1.2600]",
-              "(C) Copyright 1985-2001 Microsoft Corp.",
+              "jcsa87 Terminal OS [Versión 5.1.2600]",
+              "(C) jcsa87. All rights reserved.",
               "",
               "C:\\> inicializando entorno de portafolio...",
               "C:\\> cargando módulos: about.dll stack.dll projects.dll contact.dll",
@@ -364,7 +476,7 @@
               "",
               "Presiona cualquier tecla para continuar...",
             ],
-            title: "C:\\WINDOWS\\system32\\cmd.exe",
+            title: "C:\\jcsa87\\system87\\portafolio.exe",
             menuHeader: "// navegación",
             menuItems: [
               "01. sobre_mí",
@@ -372,16 +484,18 @@
               "03. proyectos",
               "04. contacto",
             ],
-            prompt: "Escribe el número o haz clic en una opción.",
+            prompt: "Haz clic en una opción.",
             promptPath: "C:\\portafolio>",
             consoleReady: "Sistema listo.",
             langLabel: "[ eng ]",
             themeLabel: "[ light_mode ]",
+            welcomeMessage:
+              "Bienvenido a jcsa87 Terminal OS.\nSelecciona una sección en el panel izquierdo para continuar.",
           },
           en: {
             bootLines: [
-              "Microsoft Windows XP [Version 5.1.2600]",
-              "(C) Copyright 1985-2001 Microsoft Corp.",
+              "jcsa87 Terminal OS [Version 5.1.2600]",
+              "(C) jcsa87. All rights reserved.",
               "",
               "C:\\> initializing portfolio environment...",
               "C:\\> loading modules: about.dll stack.dll projects.dll contact.dll",
@@ -390,7 +504,7 @@
               "",
               "Press any key to continue...",
             ],
-            title: "C:\\WINDOWS\\system32\\cmd.exe",
+            title: "C:\\jcsa87\\system87\\portfolio.exe",
             menuHeader: "// navigation",
             menuItems: [
               "01. about_me",
@@ -398,11 +512,13 @@
               "03. projects",
               "04. contact",
             ],
-            prompt: "Type a number or click an option.",
+            prompt: "Click an option.",
             promptPath: "C:\\portfolio>",
             consoleReady: "System ready.",
             langLabel: "[ spa ]",
             themeLabel: "[ dark_mode ]",
+            welcomeMessage:
+              "Welcome to jcsa87 Terminal OS.\nSelect a section from the left panel to continue.",
           },
         },
 
@@ -411,34 +527,63 @@
             es: `
 C:\\portafolio> type about.txt
 
->> cat skull.txt
 
-[ ascii_art_loaded ]
+[ ascii_loaded: user_avatar.sys ]
 
->> cat bio_info.txt
+<pre id="ascii-me" style="margin-bottom: 12px;"></pre>
 
-estudiante de ingeniería en sistemas.
-obsesionado con la arquitectura limpia.
-orientado al flujo de datos y la eficiencia.
+usuario: juan_cruz_senicen_acosta  
+rol: estudiante_sistemas / dev_en_formación  
+stack: sql / mysql / sqlserver / php / c# / java / javascript / nextjs / tailwind  
+enfoque: arquitectura_limpia, datos_estructurados, diseño_de_sistemas
 
-(usa las flechas o el scroll para ver más)
-<pre id="ascii-me"></pre>
+experiencia:
+  - sistemas_de_gestion
+  - paneles_administrativos
+  - autenticación_segura
+  - bases_normalizadas
+  - reportes_y_métricas
+
+intereses:
+  - filosofía/espiritualidad
+  - minimalismo
+  - fitness
+  - software_craftsmanship
+
+nota:
+  aún descubriendo mi camino como desarrollador.
+  sin orientación cerrada (backend / frontend / web).
+  comprometido con aprender y mejorar.
 `,
             en: `
 C:\\portfolio> type about.txt
 
->> cat skull.txt
+[ ascii_loaded: user_avatar.sys ]
 
-[ ascii_art_loaded ]
+<pre id="ascii-me" style="margin-bottom: 12px;"></pre>
 
->> cat bio_info.txt
+user: juan_cruz_senicen_acosta  
+role: systems_student / dev_in_progress  
+stack: sql / mysql / sqlserver / php / c# / java / javascript / nextjs / tailwind  
+focus: clean_architecture, structured_data, full_system_design
 
-systems engineering student.
-obsessed with clean architecture.
-data-flow oriented mindset.
+experience:
+  - management_systems
+  - admin_panels
+  - secure_auth
+  - normalized_databases
+  - reports_and_metrics
 
-(use arrows or scroll to see more)
-<pre id="ascii-me"></pre>
+interests:
+  - philosophy/spitiauality
+  - minimalism
+  - fitness
+  - software_craftsmanship
+
+note:
+  still exploring my path as a developer.
+  not fixed on backend / frontend / even strict web yet.
+  committed to learning and improving.
 `,
           },
           stack: {
@@ -446,20 +591,22 @@ data-flow oriented mindset.
 C:\\portafolio> type stack.json
 
 {
-  "núcleo": ["java", "python", "sql"],
-  "backend": ["t-sql", "rest", "oop"],
-  "tools": ["git", "linux", "docker"],
-  "paradigma": "ACID / REST"
+  "lenguajes": ["java", "c#", "php", "javascript", "sql"],
+  "frontend": ["html", "css", "bootstrap", "nextjs", "tailwind"],
+  "backend": ["php (codeigniter)", "c# (windows forms)", "t-sql"],
+  "bases_de_datos": ["sql server", "mysql"],
+  "tools": ["git", "vercel", "figma", "photoshop", "visual studio"]
 }
 `,
             en: `
 C:\\portfolio> type stack.json
 
 {
-  "core": ["java", "python", "sql"],
-  "backend": ["t-sql", "rest", "oop"],
-  "tools": ["git", "linux", "docker"],
-  "paradigm": "ACID / REST"
+  "languages": ["java", "c#", "php", "javascript", "sql"],
+  "frontend": ["html", "css", "bootstrap", "nextjs", "tailwind"],
+  "backend": ["php (codeigniter)", "c# (windows forms)", "t-sql"],
+  "databases": ["sql server", "mysql"],
+  "tools": ["git", "vercel", "figma", "photoshop", "visual studio"]
 }
 `,
           },
@@ -467,46 +614,74 @@ C:\\portfolio> type stack.json
             es: `
 C:\\portafolio> dir proyectos
 
-[ gestor_transacciones ]
-  motor de concurrencia sql con control de transacciones
-  y manejo de aislamiento.
+[ academic_projects ]
+  - BaseDeDatosI_Proyecto
+    diseño y modelado de base de datos relacional para un sistema de gestión.
+  - nikeproject
+    aplicación web (php + mysql) orientada a ventas / gestión tipo e-commerce.
+  - nikeprojectdesktop
+    versión de escritorio (c# + sql server) con paneles, reportes y autenticación.
+  - proyectos_taller_II (taller.II, prácticos)
+    ejercicios y prácticas de programación en c# y windows forms.
 
-[ motor_estadistico ]
-  modelos y distribuciones estadísticas en python
-  para ejercicios académicos.
+[ personal_projects ]
+  - portfolio
+    este mismo terminal estilo windows xp / cmd, desplegado como portafolio personal.
+  - prototipo_padel
+    prototipo de sistema para reservas / gestión relacionado al pádel.
+  - misc_repos
+    pequeñas pruebas, experimentos y ejercicios varios.
 
-[ otros ]
-  scripts utilitarios, automatización y prácticas de sistemas.
+para ver el código fuente completo:
+  github : https://github.com/jcsa87
 `,
             en: `
 C:\\portfolio> dir projects
 
-[ transaction_manager ]
-  sql concurrency engine with transaction control
-  and isolation handling.
+[ academic_projects ]
+  - BaseDeDatosI_Proyecto
+    relational database design and modeling for a management system.
+  - nikeproject
+    web app (php + mysql) focused on sales / management, e-commerce oriented.
+  - nikeprojectdesktop
+    desktop version (c# + sql server) with dashboards, reports and secure auth.
+  - taller_II / prácticos
+    c# / windows forms exercises and academic practice.
 
-[ stats_engine ]
-  python-based models and statistical distributions
-  for academic problems.
+[ personal_projects ]
+  - portfolio
+    this windows xp / cmd-style terminal portfolio.
+  - prototipo_padel
+    prototype system related to pádel reservations / management.
+  - misc_repos
+    small experiments, utilities and learning exercises.
 
-[ misc ]
-  utility scripts, automation and systems practice.
+for full source code:
+  github : https://github.com/jcsa87
 `,
           },
           contact: {
             es: `
 C:\\portafolio> net user contacto
 
-email  : mail@me.com
-github : https://github.com/usuario
+email    : juancruzsenicenacosta@gmail.com
+github   : https://github.com/jcsa87
+discord  : promesasimprudentes
+linkedin : https://www.linkedin.com/in/juan-cruz-senicen-acosta-a93430203/
+
+cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>descargar_cv.pdf</a>  (próximamente)
 
 (para abrir los enlaces, haz clic con el mouse)
 `,
             en: `
 C:\\portfolio> net user contact
 
-email  : mail@me.com
-github : https://github.com/usuario
+email    : juancruzsenicenacosta@gmail.com
+github   : https://github.com/jcsa87
+discord  : promesasimprudentes
+linkedin : https://www.linkedin.com/in/juan-cruz-senicen-acosta-a93430203/
+
+cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resume.pdf</a>  (coming soon)
 
 (click the links to open them)
 `,
@@ -517,13 +692,16 @@ github : https://github.com/usuario
       /* ========= APP ========= */
       const App = {
         state: {
-          lang: "es",
+          lang: "en", // por defecto en inglés
           theme: "dark",
           mode: "boot", // boot | yin | main
+          volume: 0.15,
+          skipIntro: false,
         },
         intervals: [],
 
         init() {
+          if (keySound) keySound.volume = this.state.volume;
           this.renderBootScreen();
           this.startBootSequence();
         },
@@ -532,6 +710,23 @@ github : https://github.com/usuario
         clearTimers() {
           this.intervals.forEach((id) => clearInterval(id));
           this.intervals = [];
+        },
+
+        updateVolumeDisplay() {
+          const lvlEl = document.getElementById("volume-level");
+          if (lvlEl) {
+            const percent = Math.round(this.state.volume * 100);
+            lvlEl.textContent = percent;
+          }
+          if (keySound) keySound.volume = this.state.volume;
+        },
+
+        changeVolume(delta) {
+          this.state.volume = Math.min(
+            1,
+            Math.max(0, this.state.volume + delta)
+          );
+          this.updateVolumeDisplay();
         },
 
         /* ================= BOOT ================= */
@@ -551,7 +746,7 @@ github : https://github.com/usuario
           out.textContent = "";
 
           for (let i = 0; i < lines.length - 1; i++) {
-            await this.typeLine(out, lines[i] + "\n", 12);
+            await this.typeLine(out, lines[i] + "\n", 35);
           }
 
           // last line ("press any key...")
@@ -577,6 +772,9 @@ github : https://github.com/usuario
             let i = 0;
             const id = setInterval(() => {
               element.textContent += text[i];
+
+              if (text[i] !== " ") playKey();
+
               i++;
               if (i >= text.length) {
                 clearInterval(id);
@@ -588,37 +786,36 @@ github : https://github.com/usuario
         },
 
         /* ================= YIN SCREEN ================= */
+        skipYin() {
+          if (this.state.mode !== "yin") return;
+          this.state.skipIntro = true;
+          this.toMainScreen();
+        },
+
         toYinScreen() {
           this.clearTimers();
           this.state.mode = "yin";
+          this.state.skipIntro = false;
 
           const root = document.getElementById("app-root");
           const t = Data.i18n[this.state.lang];
           root.innerHTML = `
             <div id="yin-screen" class="screen">
               <div id="yin-art" class="yin-art"></div>
-              <div id="yin-hint">
-                ${
-                  this.state.lang === "es"
-                    ? "[ENTER] para iniciar el sistema"
-                    : "[ENTER] to start the system"
-                }
-              </div>
+              <div id="yin-hint" style="opacity:0;"></div>
             </div>
           `;
 
           const artEl = document.getElementById("yin-art");
           this.typeYinArt(artEl, 1);
 
-          artEl.addEventListener("click", () => this.toMainScreen());
-
-          const keyHandler = (e) => {
+          // cualquier click o ENTER saltea la intro
+          root.addEventListener("click", () => this.skipYin());
+          window.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
-              window.removeEventListener("keydown", keyHandler);
-              this.toMainScreen();
+              this.skipYin();
             }
-          };
-          window.addEventListener("keydown", keyHandler);
+          });
         },
 
         async typeYinArt(element, speed) {
@@ -631,11 +828,15 @@ github : https://github.com/usuario
           ];
 
           for (let i = 0; i < text.length; i++) {
+            if (this.state.skipIntro) return;
+
             const ch = text[i];
+
             if (ch === "\n") {
               element.innerHTML += "<br>";
               continue;
             }
+
             const isSpace = ch === " ";
             const useGlitch = !isSpace && Math.random() < 0.12;
             const color = colors[Math.floor(Math.random() * colors.length)];
@@ -649,10 +850,28 @@ github : https://github.com/usuario
                 : `<span style="color:${color}">${safeChar}</span>`;
             }
 
+            if (!isSpace && Math.random() < 0.25) playKey();
+
             if (speed > 0) {
-              // eslint-disable-next-line no-await-in-loop
               await new Promise((r) => setTimeout(r, speed));
             }
+          }
+
+          if (this.state.skipIntro) return;
+
+          const hintEl = document.getElementById("yin-hint");
+          if (hintEl) {
+            const hintText =
+              App.state.lang === "es"
+                ? "[ENTER] para iniciar el sistema"
+                : "[ENTER] to start the system";
+
+            hintEl.textContent = hintText;
+            hintEl.style.opacity = 1;
+            hintEl.style.animation = "hintGlitch 0.45s linear";
+
+            playKey();
+            setTimeout(playKey, 120);
           }
         },
 
@@ -681,8 +900,13 @@ github : https://github.com/usuario
                 </section>
               </div>
               <div class="term-footer">
-                <span id="console-log"></span>
+                <span id="device-info"></span>
                 <span>
+                  <span id="volume-control">
+                    <span id="vol-down" class="vol-btn">[v-]</span>
+                    &nbsp;<span id="volume-level">15</span> %&nbsp;
+                    <span id="vol-up" class="vol-btn">[v+]</span>
+                  </span>
                   <span id="lang-toggle">${t.langLabel}</span>
                   &nbsp;
                   <span id="theme-toggle">${t.themeLabel}</span>
@@ -691,10 +915,10 @@ github : https://github.com/usuario
             </div>
           `;
 
+          refreshDeviceInfoDom();
           this.renderMenu();
-          this.log(`> ${t.consoleReady}`);
-          this.loadModule("about");
           this.attachFooterEvents();
+          this.setWelcomeMessage();
         },
 
         renderMenu() {
@@ -712,18 +936,28 @@ github : https://github.com/usuario
                 : idx === 2
                 ? "projects"
                 : "contact";
-            html += `${label}  <button class="menu-item-btn" onclick="App.loadModule('${key}')">[open]</button>\n`;
+            html += `<button class="menu-item-btn" onclick="App.loadModule('${key}')">${label}</button>`;
           });
 
-          html += `\n${t.prompt}\n`;
+          html += `\n\n${t.prompt}\n`;
           html += `<span id="prompt-line"><span class="prompt-path">${t.promptPath}</span> _</span>`;
 
           body.innerHTML = html;
         },
 
+        setWelcomeMessage() {
+          const t = Data.i18n[this.state.lang];
+          const out = document.getElementById("content-body");
+          if (!out) return;
+          const msg = "\n" + t.welcomeMessage + "\n";
+          this.typeHTML(out, msg, 2);
+        },
+
         attachFooterEvents() {
           const langToggle = document.getElementById("lang-toggle");
           const themeToggle = document.getElementById("theme-toggle");
+          const volDown = document.getElementById("vol-down");
+          const volUp = document.getElementById("vol-up");
 
           if (langToggle) {
             langToggle.onclick = () => {
@@ -736,6 +970,12 @@ github : https://github.com/usuario
             themeToggle.onclick = () => {
               this.toggleTheme();
             };
+          }
+
+          if (volDown && volUp) {
+            volDown.onclick = () => this.changeVolume(-0.05);
+            volUp.onclick = () => this.changeVolume(0.05);
+            this.updateVolumeDisplay();
           }
         },
 
@@ -751,15 +991,6 @@ github : https://github.com/usuario
           }
         },
 
-        log(text) {
-          const el = document.getElementById("console-log");
-          if (!el) return;
-          const time = new Date()
-            .toLocaleTimeString("en-GB", { hour12: false })
-            .substring(0, 8);
-          el.textContent = `[${time}] ${text}`;
-        },
-
         /* --- modules --- */
         loadModule(key) {
           const mod = Data.modules[key];
@@ -768,7 +999,6 @@ github : https://github.com/usuario
           if (!out) return;
           this.typeHTML(out, t, 3).then(() => {
             if (key === "about") this.injectASCII();
-            this.log(`MODULE_LOAD: ${key.toUpperCase()}`);
           });
         },
 
@@ -800,7 +1030,11 @@ github : https://github.com/usuario
                     Math.random() < 0.02 && c !== " "
                       ? `<span class="glitch-char">${c}</span>`
                       : c;
+
                   cursor.insertAdjacentHTML("beforebegin", chunk);
+
+                  if (c !== " ") playKey();
+
                   i++;
                   if (i >= part.length) {
                     clearInterval(id);
@@ -827,14 +1061,45 @@ github : https://github.com/usuario
               return;
             }
             asciiEl.textContent += lines[i] + "\n";
+            playKey();
             i++;
           }, 8);
           this.intervals.push(id);
         },
       };
 
+      /* ========= INACTIVIDAD (60s) ========= */
+      let lastActivity = Date.now();
+      const INACTIVITY_LIMIT = 60000;
+
+      function resetActivity() {
+        lastActivity = Date.now();
+      }
+
+      ["mousemove", "keydown", "click", "touchstart"].forEach((ev) =>
+        window.addEventListener(ev, resetActivity)
+      );
+
+      setInterval(() => {
+        if (Date.now() - lastActivity > INACTIVITY_LIMIT) {
+          if (App.state.mode === "main") {
+            App.toYinScreen();
+          }
+          lastActivity = Date.now();
+        }
+      }, 1000);
+
       window.App = App;
       window.onload = () => App.init();
+
+      window.addEventListener(
+        "click",
+        () => {
+          keySound.volume = App.state.volume;
+          keySound.play().catch(() => {});
+        },
+        { once: true }
+      );
     </script>
   </body>
 </html>
