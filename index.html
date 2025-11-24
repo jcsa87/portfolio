@@ -2,8 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>cmd_portfolio.exe</title>
+    <title>cmd_portfolio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
 
     <style>
       :root {
@@ -11,7 +12,7 @@
         --text-main: #f5f5f5;
         --text-dim: #aaaaaa;
         --accent-green: #00ff00;
-        --accent-blue: #00a2ff;
+        --accent-blue: oklab(68.913% -0.07277 -0.15922);
         --accent-military: #3a5f0b;
         --cursor: #ffffff;
       }
@@ -406,28 +407,45 @@
 
       /* ========= CONSTANT ASCII ART ========= */
       const YINYANG_ART = String.raw`
-                           __....__
-                       .gd$$$$$$$$$$bp.
-                    .-"^^^T$$$$$$$$$$$$$p.
-                  .'       "^T$$$$$$$$$$$$b.
-                .'            \`T$$$$$$$$$$$$b.
-               /     .d$$b.     T$$$$$$$$$$$$$b
-              /     d$$$$$$b     $$$$$$$$$$$$$$b
-             :     :$$$$$$$$;    :$$$$$$$$$$$$$$;
-             ;      T$$$$$$P     :$$$$$$$$$$$$$$$
-            :        "^$$^"      $$$$$$$$$$$$$$$$;
-            ;                   d$$$$$$$$$$$$$$$$$
-            |                 .d$$$$$$$$$$$$$$$$$$
-            ;                d$$$$$$$$$$$$$$$$$$$$
-            :               :$$$$$$P^""^T$$$$$$$$;
-             ;              $$$$$$P      T$$$$$$$
-             :              $$$$$$        $$$$$$;
-              \             :$$$$$b      d$$$$$P
-               \             T$$$$$bp..gd$$$$$P
-                \`.            \`T$$$$$$$$$$$$P'
-                  \`.            "^$$$$$$$$P'
-                    "-.            "^^T$P'
-                       "--...____...--"
+                                                            &&&&&&&&                                                            
+                                                    &&&&&............&&&&&X+                                                    
+                                                &&&.......;+xXXXXXx+.....&&&&xx+                                                
+                                             &&.....xXXXXXXXXXXXXXXXXXXx...X&&&&$X+                                             
+                                          &&....xXXXXXXXXXXXXXXXXXXXXXXXXX+..&&&&&$Xx+                                          
+                                        &&...xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:.x&&&&&&$X+                                        
+                                      &&...XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX+.x&&&&&&&$X+                                      
+                                     &..:XXXXXXXXXXXXXXXXXXX:.......XXXXXXXXXX+.&&&&&&&&&$X                                     
+                                   &&..xXXXXXXXXXXXXXXXXXXX..&&&&&&..XXXXXXXXXX..&&&&&&&&&&$x                                   
+                                  &..:XXXXXXXXXXXXXXXXXXXX+.&&&&&&&&.;XXXXXXXXXx.&&&&&&&&&&&$x                                  
+                                 &..xXXXXXXXXXXXXXXXXXXXXX+&&&&&&&&&&;XXXXXXXXXX.&&&&&&&&&&&&$x                                 
+                                &..xXXXXXXXXXXXXXXXXXXXXXX+.&&&&&&&&.;XXXXXXXXX+.&&&&&&&&&&&&&$x                                
+                               &$.xXXXXXXXXXXXXXXXXXXXXXXXX...&&&&...XXXXXXXXXX..&&&&&&&&&&&&&&$x                               
+                              &&.+XXXXXXXXXXXXXXXXXXXXXXXXXXx......xXXXXXXXXXX;.&&&&&&&&&&&&&&&&$+                              
+                              &.:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;.&&&&&&&&&&&&&&&&&&X                              
+                             &&.xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..&&&&&&&&&&&&&&&&&&&$+                             
+                             &..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx...&&&&&&&&&&&&&&&&&&&&&x                             
+                             &.+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:...&&&&&&&&&&&&&&&&&&&&&&&x                             
+                             &.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx;::.......&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
+                             &.XXXXXXXXXXXXXXXXXXXXXXXXx.........:X&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
+                             &.XXXXXXXXXXXXXXXXXXXXXx....&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
+                             &.xXXXXXXXXXXXXXXXXXXx...&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
+                             &.:XXXXXXXXXXXXXXXXX:..&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
+                             &$.XXXXXXXXXXXXXXXX..&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$+                             
+                              &.;XXXXXXXXXXXXXX..&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&X                              
+                              &&.xXXXXXXXXXXXX+.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$+                              
+                               &..XXXXXXXXXXXX.&&&&&&&&&&&&&&&&:.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&X                               
+                                &..XXXXXXXXXXX.&&&&&&&&&&&&&........&&&&&&&&&&&&&&&&&&&&&&&&&&&$                                
+                                &&..XXXXXXXXXX.&&&&&&&&&&&&&.+XXXXx.&&&&&&&&&&&&&&&&&&&&&&&&&&$x                                
+                                 &&..xXXXXXXXX.&&&&&&&&&&&&&.;XXXX;.&&&&&&&&&&&&&&&&&&&&&&&&&$x                                 
+                                   &..:XXXXXXX.&&&&&&&&&&&&&&......&&&&&&&&&&&&&&&&&&&&&&&&$X                                   
+                                    &&..+XXXXX.X&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$x                                    
+                                      &+..+XXX+.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$X                                      
+                                       &&...;XX:.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$X+                                       
+                                         &&&...+:.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$Xx;                                         
+                                            &&......&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$X+                                            
+                                               &&&....$&&&&&&&&&&&&&&&&&&&&&&&$xx                                               
+                                                   &&&....X&&&&&&&&&&&&$XxxxX                                                   
+                                                        &&&XxxxxxxxxxxX;                                                        
 `;
 
       const ASCII_ME = String.raw`                                      
@@ -485,7 +503,6 @@
               "04. contacto",
             ],
             prompt: "Haz clic en una opción.",
-            promptPath: "C:\\portafolio>",
             consoleReady: "Sistema listo.",
             langLabel: "[ eng ]",
             themeLabel: "[ light_mode ]",
@@ -513,7 +530,6 @@
               "04. contact",
             ],
             prompt: "Click an option.",
-            promptPath: "C:\\portfolio>",
             consoleReady: "System ready.",
             langLabel: "[ spa ]",
             themeLabel: "[ dark_mode ]",
@@ -530,9 +546,14 @@ C:\\portafolio> type about.txt
 
 [ ascii_loaded: user_avatar.sys ]
 
-<pre id="ascii-me" style="margin-bottom: 12px;"></pre>
+<pre id="ascii-me" style="margin-bottom: 12px;">
+</pre>
+
 
 usuario: juan_cruz_senicen_acosta  
+edad: 21  
+ciudad: corrientes, argentina  
+universidad: unne (lic. en sistemas de la información)
 rol: estudiante_sistemas / dev_en_formación  
 stack: sql / mysql / sqlserver / php / c# / java / javascript / nextjs / tailwind  
 enfoque: arquitectura_limpia, datos_estructurados, diseño_de_sistemas
@@ -554,15 +575,21 @@ nota:
   aún descubriendo mi camino como desarrollador.
   sin orientación cerrada (backend / frontend / web).
   comprometido con aprender y mejorar.
+
 `,
             en: `
 C:\\portfolio> type about.txt
 
 [ ascii_loaded: user_avatar.sys ]
 
-<pre id="ascii-me" style="margin-bottom: 12px;"></pre>
+<pre id="ascii-me" style="margin-bottom: 12px;">
+</pre>
+
 
 user: juan_cruz_senicen_acosta  
+age: 21  
+city: corrientes, argentina  
+university: unne (systems engineering undergraduate)
 role: systems_student / dev_in_progress  
 stack: sql / mysql / sqlserver / php / c# / java / javascript / nextjs / tailwind  
 focus: clean_architecture, structured_data, full_system_design
@@ -575,7 +602,7 @@ experience:
   - reports_and_metrics
 
 interests:
-  - philosophy/spitiauality
+  - philosophy/spirituality
   - minimalism
   - fitness
   - software_craftsmanship
@@ -618,72 +645,70 @@ C:\\portafolio> dir proyectos
   - BaseDeDatosI_Proyecto
     diseño y modelado de base de datos relacional para un sistema de gestión.
   - nikeproject
-    aplicación web (php + mysql) orientada a ventas / gestión tipo e-commerce.
+    aplicación web (php + mysql) tipo e-commerce / gestión de ventas.
   - nikeprojectdesktop
-    versión de escritorio (c# + sql server) con paneles, reportes y autenticación.
-  - proyectos_taller_II (taller.II, prácticos)
-    ejercicios y prácticas de programación en c# y windows forms.
+    versión escritorio (c# + sql server) con reportes, paneles y autenticación.
+  - proyectos_taller_II
+    prácticas y ejercicios académicos en c# y windows forms.
 
 [ personal_projects ]
   - portfolio
-    este mismo terminal estilo windows xp / cmd, desplegado como portafolio personal.
+    este mismo terminal estilo windows xp / cmd.
   - prototipo_padel
-    prototipo de sistema para reservas / gestión relacionado al pádel.
+    prototipo de sistema para reservas / gestión de pádel.
   - misc_repos
-    pequeñas pruebas, experimentos y ejercicios varios.
+    pruebas pequeñas, utilidades y experimentos.
 
-para ver el código fuente completo:
-  github : https://github.com/jcsa87
+código fuente → [github]
+
 `,
             en: `
 C:\\portfolio> dir projects
 
 [ academic_projects ]
   - BaseDeDatosI_Proyecto
-    relational database design and modeling for a management system.
+    relational database design and modeling for management systems.
   - nikeproject
-    web app (php + mysql) focused on sales / management, e-commerce oriented.
+    web app (php + mysql) e-commerce / sales management.
   - nikeprojectdesktop
-    desktop version (c# + sql server) with dashboards, reports and secure auth.
-  - taller_II / prácticos
-    c# / windows forms exercises and academic practice.
+    desktop version (c# + sql server) with panels, reports, secure auth.
+  - taller_II_projects
+    academic practice in c# and windows forms.
 
 [ personal_projects ]
   - portfolio
-    this windows xp / cmd-style terminal portfolio.
+    this cmd / windows xp–style terminal portfolio.
   - prototipo_padel
-    prototype system related to pádel reservations / management.
+    reservation/management padel prototype.
   - misc_repos
-    small experiments, utilities and learning exercises.
+    experiments, utilities, small practice.
 
-for full source code:
-  github : https://github.com/jcsa87
+source code → [github]
+
 `,
           },
           contact: {
             es: `
 C:\\portafolio> net user contacto
 
-email    : juancruzsenicenacosta@gmail.com
-github   : https://github.com/jcsa87
+email    : <a href="mailto:juancruzsenicenacosta@gmail.com">[email]</a>
+github   : <a href="https://github.com/jcsa87" target="_blank">[github]</a>
 discord  : promesasimprudentes
-linkedin : https://www.linkedin.com/in/juan-cruz-senicen-acosta-a93430203/
+linkedin : <a href="https://www.linkedin.com/in/juan-cruz-senicen-acosta-a93430203/" target="_blank">[linkedin]</a>
 
-cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>descargar_cv.pdf</a>  (próximamente)
+cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>[cv]</a> (próximamente)
 
-(para abrir los enlaces, haz clic con el mouse)
 `,
             en: `
 C:\\portfolio> net user contact
 
-email    : juancruzsenicenacosta@gmail.com
-github   : https://github.com/jcsa87
+email    : <a href="mailto:juancruzsenicenacosta@gmail.com">[email]</a>
+github   : <a href="https://github.com/jcsa87" target="_blank">[github]</a>
 discord  : promesasimprudentes
-linkedin : https://www.linkedin.com/in/juan-cruz-senicen-acosta-a93430203/
+linkedin : <a href="https://www.linkedin.com/in/juan-cruz-senicen-acosta-a93430203/" target="_blank">[linkedin]</a>
 
-cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resume.pdf</a>  (coming soon)
+cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>[cv]</a> (coming soon)
 
-(click the links to open them)
 `,
           },
         },
@@ -743,6 +768,16 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resum
           const t = Data.i18n[this.state.lang];
           const out = document.getElementById("boot-output");
           const lines = t.bootLines;
+
+          // tecla rápida para saltar boot
+          window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+              this.toYinScreen();
+            }
+          });
+
+          window.addEventListener("click", () => this.toYinScreen());
+
           out.textContent = "";
 
           for (let i = 0; i < lines.length - 1; i++) {
@@ -807,7 +842,7 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resum
           `;
 
           const artEl = document.getElementById("yin-art");
-          this.typeYinArt(artEl, 1);
+          this.typeYinArt(artEl, 10);
 
           // cualquier click o ENTER saltea la intro
           root.addEventListener("click", () => this.skipYin());
@@ -819,45 +854,22 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resum
         },
 
         async typeYinArt(element, speed) {
+          const lines = YINYANG_ART.split("\n");
           element.innerHTML = "";
-          const text = YINYANG_ART;
-          const colors = [
-            "var(--text-main)",
-            "var(--accent-green)",
-            "var(--accent-blue)",
-          ];
 
-          for (let i = 0; i < text.length; i++) {
+          for (let i = 0; i < lines.length; i++) {
             if (this.state.skipIntro) return;
 
-            const ch = text[i];
+            const safe = lines[i]
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/ /g, "&nbsp;");
 
-            if (ch === "\n") {
-              element.innerHTML += "<br>";
-              continue;
-            }
+            element.innerHTML += safe + "<br>";
+            playKey();
 
-            const isSpace = ch === " ";
-            const useGlitch = !isSpace && Math.random() < 0.12;
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const safeChar = ch === "<" ? "&lt;" : ch === ">" ? "&gt;" : ch;
-
-            if (useGlitch) {
-              element.innerHTML += `<span class="glitch-char" style="color:${color}">${safeChar}</span>`;
-            } else {
-              element.innerHTML += isSpace
-                ? "&nbsp;"
-                : `<span style="color:${color}">${safeChar}</span>`;
-            }
-
-            if (!isSpace && Math.random() < 0.25) playKey();
-
-            if (speed > 0) {
-              await new Promise((r) => setTimeout(r, speed));
-            }
+            if (speed > 0) await new Promise((r) => setTimeout(r, speed));
           }
-
-          if (this.state.skipIntro) return;
 
           const hintEl = document.getElementById("yin-hint");
           if (hintEl) {
@@ -869,12 +881,8 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resum
             hintEl.textContent = hintText;
             hintEl.style.opacity = 1;
             hintEl.style.animation = "hintGlitch 0.45s linear";
-
-            playKey();
-            setTimeout(playKey, 120);
           }
         },
-
         /* ================= MAIN TERMINAL ================= */
         toMainScreen() {
           this.clearTimers();
@@ -940,7 +948,6 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resum
           });
 
           html += `\n\n${t.prompt}\n`;
-          html += `<span id="prompt-line"><span class="prompt-path">${t.promptPath}</span> _</span>`;
 
           body.innerHTML = html;
         },
@@ -997,11 +1004,17 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resum
           const t = mod ? mod[this.state.lang] : "";
           const out = document.getElementById("content-body");
           if (!out) return;
-          this.typeHTML(out, t, 3).then(() => {
-            if (key === "about") this.injectASCII();
-          });
-        },
 
+          // --- FIX: el módulo "about" NO pasa por typeHTML ---
+          if (key === "about") {
+            out.innerHTML = t; // render directo sin efectos
+            this.injectASCII(); // carga ASCII sin interferencias
+            return;
+          }
+
+          // otros módulos siguen usando typing normal
+          this.typeHTML(out, t, 3);
+        },
         typeHTML(element, html, speed) {
           return new Promise((resolve) => {
             element.innerHTML = "";
@@ -1009,43 +1022,66 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>download_resum
             cursor.className = "typing-cursor";
             element.appendChild(cursor);
 
-            const parts = html.split(/(<[^>]+>)/g).filter((p) => p !== "");
+            // Detectar <a ...>...</a> como un solo bloque
+            const parts = [];
+            const linkRegex = /<a[\s\S]*?<\/a>/gi;
+            let lastIndex = 0;
+            let match;
+
+            while ((match = linkRegex.exec(html)) !== null) {
+              if (match.index > lastIndex) {
+                parts.push(html.substring(lastIndex, match.index));
+              }
+              parts.push(match[0]); // el link entero
+              lastIndex = match.index + match[0].length;
+            }
+
+            if (lastIndex < html.length) {
+              parts.push(html.substring(lastIndex));
+            }
 
             let idx = 0;
-            const typeNextPart = () => {
+
+            const typeNext = () => {
               if (idx >= parts.length) {
                 cursor.remove();
                 resolve();
                 return;
               }
+
               const part = parts[idx++];
-              if (part.startsWith("<") && part.endsWith(">")) {
+
+              // Si es un <a ...>...</a>, insertar sin tipeo
+              if (part.startsWith("<a")) {
                 cursor.insertAdjacentHTML("beforebegin", part);
-                typeNextPart();
-              } else {
-                let i = 0;
-                const id = setInterval(() => {
-                  const c = part[i];
-                  const chunk =
-                    Math.random() < 0.02 && c !== " "
-                      ? `<span class="glitch-char">${c}</span>`
-                      : c;
-
-                  cursor.insertAdjacentHTML("beforebegin", chunk);
-
-                  if (c !== " ") playKey();
-
-                  i++;
-                  if (i >= part.length) {
-                    clearInterval(id);
-                    typeNextPart();
-                  }
-                }, speed);
-                App.intervals.push(id);
+                typeNext();
+                return;
               }
+
+              // Tipo "normal" de texto con glitch
+              let i = 0;
+              const id = setInterval(() => {
+                const c = part[i];
+                const out =
+                  Math.random() < 0.02 && c !== " "
+                    ? `<span class="glitch-char">${c}</span>`
+                    : c;
+
+                cursor.insertAdjacentHTML("beforebegin", out);
+
+                if (c !== " ") playKey();
+
+                i++;
+                if (i >= part.length) {
+                  clearInterval(id);
+                  typeNext();
+                }
+              }, speed);
+
+              App.intervals.push(id);
             };
 
-            typeNextPart();
+            typeNext();
           });
         },
 
