@@ -2,39 +2,17 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <title>cmd_portfolio.exe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>~/terminal</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
 
     <style>
       :root {
-        --bg-color: #050505;
-        --text-main: #e0e0e0;
-        --text-dim: #666666;
-        --alg-green: #00d26a;
-        --alg-red: #ff0038;
-        --border-style: 2px dashed var(--alg-green);
-        --cursor: var(--alg-red);
-      }
-
-      .ascii-logo {
-        font-size: 10px;
-        line-height: 11px;
-        margin-bottom: 20px;
-        color: var(--text-main);
-        white-space: pre;
-      }
-
-      body.light-mode {
-        --bg-color: #e6e6e6;
-        --text-main: #111111;
-        --text-dim: #888888;
+        --bg-color: #000000;
+        --text-main: #f5f5f5;
+        --text-dim: #aaaaaa;
+        --accent-green: #00ff00;
+        --accent-blue: #00a2ff;
+        --cursor: #ffffff;
       }
 
       * {
@@ -43,190 +21,91 @@
         box-sizing: border-box;
       }
 
+      html,
+      body {
+        height: 100%;
+      }
+
       body {
         background-color: var(--bg-color);
         color: var(--text-main);
-        font-family: "IBM Plex Mono", monospace;
-        display: grid;
-        grid-template-columns: 300px 1fr 300px;
-        height: 100vh;
+        font-family: "Lucida Console", "Consolas", "Courier New", monospace;
         overflow: hidden;
       }
 
-      /* CRT overlays */
-      .scanlines {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        background: repeating-linear-gradient(
-          to bottom,
-          rgba(255, 255, 255, 0) 0px,
-          rgba(255, 255, 255, 0) 2px,
-          rgba(0, 0, 0, 0.12) 3px
-        );
-        z-index: 9999;
-        opacity: 0.5;
-      }
-
-      .noise-overlay {
-        position: fixed;
-        inset: 0;
-        pointer-events: none;
-        opacity: 0.03;
-        z-index: 9998;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-      }
-
-      /* Layout base: sin bordes visibles al inicio */
-      .sidebar {
-        width: 300px;
-        height: 100vh; /* ← ESSENCIAL */
-        padding: 40px;
-        overflow-y: auto; /* ← Permite contenido largo */
-        opacity: 0;
-        border: none;
-        position: relative;
-        transition: opacity 0.25s linear;
-      }
-
-      .sidebar-inner {
-        display: flex;
-        flex-direction: column;
+      /* --- screens root --- */
+      #app-root {
+        width: 100%;
         height: 100%;
-      }
-
-      .sidebar.active {
-        opacity: 1;
-      }
-
-      .sidebar-right {
-        border-left: none;
-      }
-
-      .sidebar-left.active {
-        border-right: var(--border-style);
-      }
-
-      .sidebar-right.active {
-        border-left: var(--border-style);
-      }
-
-      .sidebar-inner {
-        flex-direction: column;
-        height: 100%;
-      }
-
-      .sidebar-footer {
-        margin-top: auto;
-        font-size: 12px;
-        color: var(--text-dim);
-        padding-top: 12px;
-        border-top: 1px dashed var(--text-dim);
-      }
-
-      .main-content {
-        flex: 1;
-        padding: 40px;
-        overflow-y: auto;
-      }
-
-      #terminal-output {
-        max-width: 900px;
-        margin: 0 auto;
-        line-height: 1.4;
-        min-height: 100%;
-      }
-
-      .centered {
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 16px;
       }
 
-      /* Intro */
-      .intro-wrapper {
+      .screen {
+        width: 100%;
+        height: 100%;
+        max-width: 1100px;
+        max-height: 650px;
+        margin: 0 auto;
+      }
+
+      /* ===== BOOT SCREEN ===== */
+      #boot-screen {
+        border: 2px solid var(--accent-blue);
+        background: #000;
+        padding: 12px 16px;
+        overflow: hidden;
+      }
+
+      #boot-output {
+        font-size: 13px;
+        line-height: 1.35;
+        white-space: pre-wrap;
+      }
+
+      .blink {
+        animation: blink 1s steps(2, start) infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        50.01%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      /* ===== YIN INTRO ===== */
+      #yin-screen {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        justify-content: center;
+        border: 2px solid var(--accent-blue);
+        background: #000;
+        padding: 24px;
+        text-align: center;
       }
 
       .yin-art {
         font-size: 11px;
         line-height: 11px;
-        font-weight: 400;
-        cursor: pointer;
-        text-align: left;
-        white-space: pre-wrap;
-        overflow-wrap: break-word;
-        max-width: 90vw;
-      }
-
-      .intro-controls {
-        font-size: 12px;
-        margin-top: 16px;
-      }
-
-      /* headers */
-      .ascii-header {
-        color: var(--alg-green);
-        font-weight: 600;
-        margin-bottom: 12px;
         white-space: pre;
-      }
-
-      button.nav-btn {
-        background: none;
-        border: none;
-        color: var(--text-dim);
-        font-family: inherit;
-        font-size: 15px;
         cursor: pointer;
-        margin-bottom: 10px;
-        text-align: left;
-        width: 100%;
+        margin-bottom: 16px;
       }
 
-      button.nav-btn:hover {
-        color: var(--text-main);
-      }
-
-      .toggle-btn {
-        background: none;
-        border: none;
+      #yin-hint {
+        margin-top: 12px;
+        font-size: 13px;
         color: var(--text-dim);
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 12px;
-        margin-right: 8px;
       }
 
-      .toggle-btn:hover {
-        color: var(--alg-green);
-        text-shadow: 0 0 5px var(--alg-green);
-      }
-
-      /* typewriter cursor */
-      .typing-cursor {
-        display: inline-block;
-        width: 8px;
-        height: 1em;
-        background-color: var(--cursor);
-        animation: blink 0.5s infinite;
-        vertical-align: bottom;
-      }
-
-      @keyframes blink {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.1;
-        }
-      }
-
-      /* glitch chars */
       .glitch-char {
         animation: glitch 0.15s linear alternate;
       }
@@ -242,15 +121,112 @@
         }
       }
 
+      /* ===== MAIN TERMINAL ===== */
+      #main-screen {
+        display: flex;
+        flex-direction: column;
+        border: 2px solid var(--accent-blue);
+        background: #000;
+      }
+
+      .term-titlebar {
+        background: #000080;
+        color: #f5f5f5;
+        padding: 4px 8px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .term-titlebar span {
+        white-space: nowrap;
+      }
+
+      .term-body {
+        flex: 1;
+        border-top: 1px solid #003399;
+        padding: 8px 10px;
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 8px;
+        overflow: hidden;
+      }
+
+      .pane {
+        border: 1px solid #004000;
+        padding: 6px 7px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #000;
+      }
+
+      .pane-header {
+        font-size: 12px;
+        color: var(--accent-green);
+        margin-bottom: 4px;
+      }
+
+      .pane-body {
+        font-size: 13px;
+        color: var(--text-main);
+        flex: 1;
+        overflow-y: auto;
+        line-height: 1.35;
+        white-space: pre-wrap;
+      }
+
+      /* left menu */
+      #menu-body {
+        font-size: 13px;
+      }
+
+      .menu-item-btn {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .menu-item-btn:hover {
+        color: var(--accent-green);
+      }
+
+      #prompt-line {
+        margin-top: 10px;
+        color: var(--accent-green);
+      }
+
+      .prompt-path {
+        color: var(--text-main);
+      }
+
+      /* right content */
+      #content-body {
+        font-size: 13px;
+      }
+
+      .typing-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 1em;
+        background-color: var(--cursor);
+        animation: blink 0.6s steps(2, start) infinite;
+        vertical-align: bottom;
+      }
+
       pre {
-        font-family: "IBM Plex Mono", monospace;
-        font-size: 10px;
-        line-height: 1.05;
+        font-family: inherit;
+        font-size: 12px;
         white-space: pre;
       }
 
       a {
-        color: var(--alg-green);
+        color: var(--accent-green);
         text-decoration: none;
       }
 
@@ -258,45 +234,41 @@
         text-decoration: underline;
       }
 
+      /* bottom console bar */
+      .term-footer {
+        border-top: 1px solid #003399;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: var(--text-dim);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      #console-log {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #lang-toggle,
+      #theme-toggle {
+        cursor: pointer;
+      }
+
       @media (max-width: 900px) {
-        body {
-          flex-direction: column;
-          height: auto;
-        }
-
-        .sidebar {
-          width: 100%;
-          border-right: none;
-          border-left: none;
-        }
-
-        .sidebar-left.active {
-          border-bottom: var(--border-style);
-          border-right: none;
-        }
-
-        .sidebar-right.active {
-          border-top: var(--border-style);
-          border-left: none;
+        .term-body {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto;
         }
       }
     </style>
   </head>
 
   <body>
-    <div class="scanlines"></div>
-    <div class="noise-overlay"></div>
-
-    <aside class="sidebar sidebar-left" id="sb-left"></aside>
-
-    <main class="main-content">
-      <div id="terminal-output" class="centered"></div>
-    </main>
-
-    <aside class="sidebar sidebar-right" id="sb-right"></aside>
+    <div id="app-root"></div>
 
     <script>
-      /* ========= YIN–YANG INTRO ART ========= */
+      /* ========= CONSTANT ASCII ART ========= */
       const YINYANG_ART = String.raw`
                            __....__
                        .gd$$$$$$$$$$bp.
@@ -320,21 +292,8 @@
                   \`.            "^$$$$$$$$P'
                     "-.            "^^T$P'
                        "--...____...--"
-            `;
+`;
 
-      const YINYANG_LOGO = String.raw`
-           _.ooo-._
-         .OOOP   _ '.
-        dOOOO   (_)  \
-       OOOOOb         |
-       OOOOOOb.       |
-       OOOOOOOOb      |
-        YOO(_)OOO    /
-         'OOOOOY  _.'
-           '""""''
-           `;
-
-      /* ========= TU ASCII (ABOUT) ========= */
       const ASCII_ME = String.raw`
                         .....................................................................................................
                         ..............................=*##*****+=-..........................................................
@@ -389,114 +348,168 @@
                         ..:@@@@@@@@@@@@@@@@%###########################*********************************@%#@**#########**###
                         ..-@@@@@@@@@@@@@@%##############################********************************%@%@#*#%%######**##%
                         ..=@@@@@@@@@@@@@%###########**###################*********
-            `;
+`;
 
-      const noiseChars = [".", ":", "*", "`", "-", "="];
-
-      /* ========= TEXTOS / MÓDULOS ========= */
       const Data = {
         i18n: {
-          en: {
-            nav_h: "// navigation",
-            sys_h: "// system_info",
-            debug_h: "// debug_console",
-            mem_h: "// heap_memory",
-            opts: {
-              about: "01. about_me",
-              stack: "02. tech_stack",
-              proj: "03. projects",
-              contact: "04. contact",
-              back: "[ return_home ]",
-            },
-            sys: {
-              user: "user:",
-              status: "status:",
-              val: "online",
-              uptime: "uptime:",
-            },
-          },
           es: {
-            nav_h: "// navegación",
-            sys_h: "// info_sistema",
-            debug_h: "// consola_debug",
-            mem_h: "// memoria_heap",
-            opts: {
-              about: "01. sobre_mí",
-              stack: "02. tecnologías",
-              proj: "03. proyectos",
-              contact: "04. contacto",
-              back: "[ volver_inicio ]",
-            },
-            sys: {
-              user: "usuario:",
-              status: "estado:",
-              val: "en línea",
-              uptime: "tiempo:",
-            },
+            bootLines: [
+              "Microsoft Windows XP [Versión 5.1.2600]",
+              "(C) Copyright 1985-2001 Microsoft Corp.",
+              "",
+              "C:\\> inicializando entorno de portafolio...",
+              "C:\\> cargando módulos: about.dll stack.dll projects.dll contact.dll",
+              "C:\\> configurando interfaz de terminal...",
+              "C:\\> listo.",
+              "",
+              "Presiona cualquier tecla para continuar...",
+            ],
+            title: "C:\\WINDOWS\\system32\\cmd.exe",
+            menuHeader: "// navegación",
+            menuItems: [
+              "01. sobre_mí",
+              "02. tecnologías",
+              "03. proyectos",
+              "04. contacto",
+            ],
+            prompt: "Escribe el número o haz clic en una opción.",
+            promptPath: "C:\\portafolio>",
+            consoleReady: "Sistema listo.",
+            langLabel: "[ eng ]",
+            themeLabel: "[ light_mode ]",
+          },
+          en: {
+            bootLines: [
+              "Microsoft Windows XP [Version 5.1.2600]",
+              "(C) Copyright 1985-2001 Microsoft Corp.",
+              "",
+              "C:\\> initializing portfolio environment...",
+              "C:\\> loading modules: about.dll stack.dll projects.dll contact.dll",
+              "C:\\> setting up terminal interface...",
+              "C:\\> done.",
+              "",
+              "Press any key to continue...",
+            ],
+            title: "C:\\WINDOWS\\system32\\cmd.exe",
+            menuHeader: "// navigation",
+            menuItems: [
+              "01. about_me",
+              "02. tech_stack",
+              "03. projects",
+              "04. contact",
+            ],
+            prompt: "Type a number or click an option.",
+            promptPath: "C:\\portfolio>",
+            consoleReady: "System ready.",
+            langLabel: "[ spa ]",
+            themeLabel: "[ dark_mode ]",
           },
         },
 
         modules: {
           about: {
-            en: `
-                        <p><span style="color:var(--alg-green)">>></span> cat skull.txt</p>
-                        <pre id="ascii-me"></pre>
-
-                        <br>
-
-                        <p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
-                        <pre id="ascii-bio">
-                        systems engineering student.
-                        obsessed with clean architecture.
-                        data-flow oriented mindset.
-                        </pre>
-                        `,
             es: `
-                        <p><span style="color:var(--alg-green)">>></span> cat skull.txt</p>
-                        <pre id="ascii-me"></pre>
+C:\\portafolio> type about.txt
 
-                        <br>
+>> cat skull.txt
 
-                        <p><span style="color:var(--alg-green)">>></span> cat bio_info.txt</p>
-                        <pre id="ascii-bio">
-                        estudiante de ingeniería en sistemas.
-                        obsesionado con la arquitectura limpia.
-                        orientado al flujo de datos y la eficiencia.
-                        </pre>
-                        `,
+[ ascii_art_loaded ]
+
+>> cat bio_info.txt
+
+estudiante de ingeniería en sistemas.
+obsesionado con la arquitectura limpia.
+orientado al flujo de datos y la eficiencia.
+
+(usa las flechas o el scroll para ver más)
+<pre id="ascii-me"></pre>
+`,
+            en: `
+C:\\portfolio> type about.txt
+
+>> cat skull.txt
+
+[ ascii_art_loaded ]
+
+>> cat bio_info.txt
+
+systems engineering student.
+obsessed with clean architecture.
+data-flow oriented mindset.
+
+(use arrows or scroll to see more)
+<pre id="ascii-me"></pre>
+`,
           },
-
           stack: {
-            en: `<pre>{ "core": ["java","python","sql"], "paradigm": "ACID / REST" }</pre>`,
-            es: `<pre>{ "núcleo": ["java","python","sql"], "paradigma": "ACID / REST" }</pre>`,
-          },
+            es: `
+C:\\portafolio> type stack.json
 
+{
+  "núcleo": ["java", "python", "sql"],
+  "backend": ["t-sql", "rest", "oop"],
+  "tools": ["git", "linux", "docker"],
+  "paradigma": "ACID / REST"
+}
+`,
+            en: `
+C:\\portfolio> type stack.json
+
+{
+  "core": ["java", "python", "sql"],
+  "backend": ["t-sql", "rest", "oop"],
+  "tools": ["git", "linux", "docker"],
+  "paradigm": "ACID / REST"
+}
+`,
+          },
           projects: {
-            en: `
-                        <strong>[ transaction_manager ]</strong>
-                        <p>sql concurrency control engine.</p><br>
-
-                        <strong>[ stats_engine ]</strong>
-                        <p>python-based distributions and statistics.</p>
-                        `,
             es: `
-                        <strong>[ gestor_transacciones ]</strong>
-                        <p>motor de concurrencia sql.</p><br>
+C:\\portafolio> dir proyectos
 
-                        <strong>[ motor_estadístico ]</strong>
-                        <p>modelos y distribuciones estadísticas.</p>
-                        `,
+[ gestor_transacciones ]
+  motor de concurrencia sql con control de transacciones
+  y manejo de aislamiento.
+
+[ motor_estadistico ]
+  modelos y distribuciones estadísticas en python
+  para ejercicios académicos.
+
+[ otros ]
+  scripts utilitarios, automatización y prácticas de sistemas.
+`,
+            en: `
+C:\\portfolio> dir projects
+
+[ transaction_manager ]
+  sql concurrency engine with transaction control
+  and isolation handling.
+
+[ stats_engine ]
+  python-based models and statistical distributions
+  for academic problems.
+
+[ misc ]
+  utility scripts, automation and systems practice.
+`,
           },
-
           contact: {
-            en: `
-                        email: <a href="mailto:mail@me.com">mail@me.com</a><br>
-                        github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
-                        `,
             es: `
-                        email: <a href="mailto:mail@me.com">mail@me.com</a><br>
-                        github: <a href="https://github.com/usuario" target="_blank">@usuario</a>
-                        `,
+C:\\portafolio> net user contacto
+
+email  : mail@me.com
+github : https://github.com/usuario
+
+(para abrir los enlaces, haz clic con el mouse)
+`,
+            en: `
+C:\\portfolio> net user contact
+
+email  : mail@me.com
+github : https://github.com/usuario
+
+(click the links to open them)
+`,
           },
         },
       };
@@ -506,412 +519,299 @@
         state: {
           lang: "es",
           theme: "dark",
-          booted: false,
-          uptime: 0,
+          mode: "boot", // boot | yin | main
         },
         intervals: [],
-        audioCtx: null,
-        audioEnabled: false,
 
         init() {
-          this.setupAudio();
-          this.renderIntro();
-          setInterval(() => {
-            if (this.state.booted) {
-              this.state.uptime++;
-              const el = document.getElementById("uptime");
-              if (el) el.textContent = this.state.uptime + "s";
-            }
-          }, 1000);
+          this.renderBootScreen();
+          this.startBootSequence();
         },
 
-        animateLogoGlitch(element) {
-          const colors = [
-            "var(--alg-green)",
-            "var(--alg-red)",
-            "var(--text-main)",
-            "#7afcff",
-            "#ffb3fe",
-          ];
-
-          const noise = [".", ":", "*", "`", "-", "=", "o", "O"];
-
-          const id = setInterval(() => {
-            const spans = element.querySelectorAll("span, .glitch-char");
-            if (spans.length === 0) return;
-
-            const span = spans[Math.floor(Math.random() * spans.length)];
-
-            // Mutación de carácter (25%)
-            if (Math.random() < 0.25) {
-              const original = span.textContent;
-              const mutated = noise[Math.floor(Math.random() * noise.length)];
-              span.textContent = mutated;
-              setTimeout(() => {
-                span.textContent = original;
-              }, 120 + Math.random() * 150);
-            }
-
-            // Cambio de color (100%)
-            span.style.color =
-              colors[Math.floor(Math.random() * colors.length)];
-          }, 40);
-
-          this.intervals.push(id);
-        },
-
-        /* --- AUDIO --- */
-        setupAudio() {
-          const unlock = () => {
-            if (this.audioEnabled) return;
-            try {
-              this.audioCtx = new (window.AudioContext ||
-                window.webkitAudioContext)();
-              this.audioEnabled = true;
-            } catch (e) {
-              this.audioEnabled = false;
-            }
-            document.removeEventListener("click", unlock);
-          };
-          document.addEventListener("click", unlock, { once: true });
-        },
-
-        playKeySound() {
-          if (!this.audioEnabled || !this.audioCtx) return;
-          const ctx = this.audioCtx;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          const now = ctx.currentTime;
-          const freq = 260 + Math.random() * 140;
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.04, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.06);
-        },
-
-        clearIntervals() {
+        /* --- utilities --- */
+        clearTimers() {
           this.intervals.forEach((id) => clearInterval(id));
           this.intervals = [];
         },
 
-        /* --- INTRO: YIN–YANG --- */
-        renderIntro() {
-          const out = document.getElementById("terminal-output");
-          out.classList.add("centered");
-
-          const langBtnText = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
-          const themeBtnText =
-            this.state.theme === "dark" ? "[ light mode ]" : "[ dark mode ]";
-
-          out.innerHTML = `
-                  <div class="intro-wrapper">
-                    <div id="yin-intro" class="yin-art"></div>
-                    <div id="intro-controls" class="intro-controls" style="display:none;">
-                      <button class="toggle-btn" id="intro-lang-btn">${langBtnText}</button>
-                      <button class="toggle-btn" id="intro-theme-btn">${themeBtnText}</button>
-                    </div>
-                  </div>
-                `;
-
-          const yin = document.getElementById("yin-intro");
-          yin.addEventListener("click", () => this.bootSystem());
-          this.typeYinIntro(yin, 1); // ajusta la velocidad aquí
+        /* ================= BOOT ================= */
+        renderBootScreen() {
+          const root = document.getElementById("app-root");
+          root.innerHTML = `
+            <div id="boot-screen" class="screen">
+              <div id="boot-output"></div>
+            </div>
+          `;
         },
 
-        async typeYinIntro(element, speed) {
+        async startBootSequence() {
+          const t = Data.i18n[this.state.lang];
+          const out = document.getElementById("boot-output");
+          const lines = t.bootLines;
+          out.textContent = "";
+
+          for (let i = 0; i < lines.length - 1; i++) {
+            await this.typeLine(out, lines[i] + "\n", 12);
+          }
+
+          // last line ("press any key...")
+          const last = lines[lines.length - 1];
+          const lineSpan = document.createElement("span");
+          out.appendChild(lineSpan);
+          await this.typeLine(lineSpan, last, 25);
+
+          const blinkSpan = document.createElement("span");
+          blinkSpan.className = "blink";
+          blinkSpan.textContent = "_";
+          out.appendChild(blinkSpan);
+
+          const handler = () => {
+            window.removeEventListener("keydown", handler);
+            this.toYinScreen();
+          };
+          window.addEventListener("keydown", handler);
+        },
+
+        typeLine(element, text, speed) {
+          return new Promise((resolve) => {
+            let i = 0;
+            const id = setInterval(() => {
+              element.textContent += text[i];
+              i++;
+              if (i >= text.length) {
+                clearInterval(id);
+                resolve();
+              }
+            }, speed);
+            this.intervals.push(id);
+          });
+        },
+
+        /* ================= YIN SCREEN ================= */
+        toYinScreen() {
+          this.clearTimers();
+          this.state.mode = "yin";
+
+          const root = document.getElementById("app-root");
+          const t = Data.i18n[this.state.lang];
+          root.innerHTML = `
+            <div id="yin-screen" class="screen">
+              <div id="yin-art" class="yin-art"></div>
+              <div id="yin-hint">
+                ${
+                  this.state.lang === "es"
+                    ? "[ENTER] para iniciar el sistema"
+                    : "[ENTER] to start the system"
+                }
+              </div>
+            </div>
+          `;
+
+          const artEl = document.getElementById("yin-art");
+          this.typeYinArt(artEl, 1);
+
+          artEl.addEventListener("click", () => this.toMainScreen());
+
+          const keyHandler = (e) => {
+            if (e.key === "Enter") {
+              window.removeEventListener("keydown", keyHandler);
+              this.toMainScreen();
+            }
+          };
+          window.addEventListener("keydown", keyHandler);
+        },
+
+        async typeYinArt(element, speed) {
           element.innerHTML = "";
           const text = YINYANG_ART;
+          const colors = [
+            "var(--text-main)",
+            "var(--accent-green)",
+            "var(--accent-blue)",
+          ];
 
           for (let i = 0; i < text.length; i++) {
             const ch = text[i];
-
             if (ch === "\n") {
               element.innerHTML += "<br>";
-            } else {
-              const isSpace = ch === " ";
-              const useGlitch = !isSpace && Math.random() < 0.12;
-              const colorPool = [
-                "var(--alg-green)",
-                "var(--alg-red)",
-                "var(--text-main)",
-              ];
-              const col =
-                colorPool[Math.floor(Math.random() * colorPool.length)];
-              const safeChar = ch === "<" ? "&lt;" : ch === ">" ? "&gt;" : ch;
+              continue;
+            }
+            const isSpace = ch === " ";
+            const useGlitch = !isSpace && Math.random() < 0.12;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const safeChar = ch === "<" ? "&lt;" : ch === ">" ? "&gt;" : ch;
 
-              if (useGlitch) {
-                element.innerHTML += `<span class="glitch-char" style="color:${col}">${safeChar}</span>`;
-              } else {
-                element.innerHTML += isSpace
-                  ? "&nbsp;"
-                  : `<span style="color:${col}">${safeChar}</span>`;
-              }
+            if (useGlitch) {
+              element.innerHTML += `<span class="glitch-char" style="color:${color}">${safeChar}</span>`;
+            } else {
+              element.innerHTML += isSpace
+                ? "&nbsp;"
+                : `<span style="color:${color}">${safeChar}</span>`;
             }
 
-            if (ch !== "\n" && ch !== " ") this.playKeySound();
             if (speed > 0) {
+              // eslint-disable-next-line no-await-in-loop
               await new Promise((r) => setTimeout(r, speed));
             }
           }
-
-          this.animateYinContinuous(element);
-
-          const controls = document.getElementById("intro-controls");
-          if (controls) controls.style.display = "block";
         },
 
-        /* --- EFECTO VIVO YIN–YANG --- */
-        animateYinContinuous(element) {
-          const colors = [
-            "var(--alg-green)",
-            "var(--alg-red)",
-            "var(--text-main)",
-            "#7afcff",
-            "#ffb3fe",
-          ];
+        /* ================= MAIN TERMINAL ================= */
+        toMainScreen() {
+          this.clearTimers();
+          this.state.mode = "main";
 
-          const id = setInterval(() => {
-            const spans = element.querySelectorAll("span, .glitch-char");
-            if (spans.length === 0) return;
-
-            const span = spans[Math.floor(Math.random() * spans.length)];
-
-            if (Math.random() < 0.2) {
-              const original = span.textContent;
-              const mutated =
-                noiseChars[Math.floor(Math.random() * noiseChars.length)];
-              span.textContent = mutated;
-              setTimeout(() => {
-                span.textContent = original;
-              }, 120 + Math.random() * 200);
-            }
-
-            span.style.color =
-              colors[Math.floor(Math.random() * colors.length)];
-          }, 35);
-
-          this.intervals.push(id);
-        },
-
-        /* --- TOGGLES EN INTRO (sin re-renderizar arte) --- */
-        toggleLangIntro() {
-          this.state.lang = this.state.lang === "en" ? "es" : "en";
-          const btn = document.getElementById("intro-lang-btn");
-          if (btn) {
-            btn.textContent = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
-          }
-        },
-
-        toggleThemeIntro() {
-          this.state.theme = this.state.theme === "dark" ? "light" : "dark";
-          document.body.classList.toggle("light-mode");
-          const btn = document.getElementById("intro-theme-btn");
-          if (btn) {
-            btn.textContent =
-              this.state.theme === "dark" ? "[ light mode ]" : "[ dark mode ]";
-          }
-        },
-
-        /* --- BOOT --- */
-        bootSystem() {
-          if (this.state.booted) return;
-          this.state.booted = true;
-          this.state.uptime = 0;
-
-          this.clearIntervals();
-
-          const out = document.getElementById("terminal-output");
-          out.classList.remove("centered");
-          out.innerHTML = "";
-
+          const root = document.getElementById("app-root");
           const t = Data.i18n[this.state.lang];
-          const langBtnText = this.state.lang === "en" ? "[ spa ]" : "[ eng ]";
-          const themeBtnText =
-            this.state.theme === "dark" ? "[ light_mode ]" : "[ dark_mode ]";
 
-          const sbLeft = document.getElementById("sb-left");
-          const sbRight = document.getElementById("sb-right");
+          root.innerHTML = `
+            <div id="main-screen" class="screen">
+              <div class="term-titlebar">
+                <span>${t.title}</span>
+                <span>- cmd_portfolio</span>
+              </div>
+              <div class="term-body">
+                <section class="pane">
+                  <div class="pane-header">${t.menuHeader}</div>
+                  <div id="menu-body" class="pane-body"></div>
+                </section>
+                <section class="pane">
+                  <div class="pane-header">// display</div>
+                  <div id="content-body" class="pane-body"></div>
+                </section>
+              </div>
+              <div class="term-footer">
+                <span id="console-log"></span>
+                <span>
+                  <span id="lang-toggle">${t.langLabel}</span>
+                  &nbsp;
+                  <span id="theme-toggle">${t.themeLabel}</span>
+                </span>
+              </div>
+            </div>
+          `;
 
-          sbLeft.style.opacity = "1";
-          sbRight.style.opacity = "1";
-
-          sbLeft.classList.add("active");
-          sbRight.classList.add("active");
-
-          // activar bordes justo al boot
-          sbLeft.classList.add("active");
-          sbRight.classList.add("active");
-
-          const leftHTML = `
-      <div class="sidebar-inner">
-
-        <pre class="ascii-logo">${YINYANG_LOGO}</pre>
-
-        <div>
-          <div class="ascii-header">${t.nav_h}</div>
-          <nav>
-            <button class="nav-btn" onclick="App.loadModule('about')">${t.opts.about}</button>
-            <button class="nav-btn" onclick="App.loadModule('projects')">${t.opts.proj}</button>
-            <button class="nav-btn" onclick="App.loadModule('contact')">${t.opts.contact}</button>
-            <button class="nav-btn" onclick="App.loadModule('logs')">05. logs</button>
-            <br>
-            <button class="nav-btn" onclick="App.resetToIntro()">${t.opts.back}</button>
-          </nav>
-        </div>
-
-        <div class="sidebar-footer">
-          <button class="toggle-btn" onclick="App.toggleLang()">${langBtnText}</button>
-          <button class="toggle-btn" onclick="App.toggleTheme()">${themeBtnText}</button>
-        </div>
-
-      </div>
-      `;
-
-          const rightHTML = `
-                  <div class="sidebar-inner">
-                    <div>
-                      <div class="ascii-header">${t.sys_h}</div>
-                      <div>
-                        ${t.sys.user} guest<br>
-                        ${t.sys.status} <span style="color:var(--alg-green)">${t.sys.val}</span><br>
-                        ${t.sys.uptime} <span id="uptime">0s</span>
-                      </div>
-                      <br>
-                      <div class="ascii-header">${t.mem_h}</div>
-                      <div id="heap-dump" style="font-size:11px;color:var(--alg-green);opacity:.7;"></div>
-                      <br>
-                      <div class="ascii-header">${t.debug_h}</div>
-                      <div id="debug-log" style="font-size:11px;max-height:160px;overflow:hidden;"></div>
-                    </div>
-                  </div>
-                `;
-
-          // sidebars se escriben en simultáneo
-          this.typeHTML(sbLeft, leftHTML, 2, true).then(() => {
-            const logo = sbLeft.querySelector(".ascii-logo");
-            if (logo) {
-              // Convierte el ASCII en <span> para permitir glitch dinámico
-              this.wrapLogoChars(logo);
-              this.animateLogoGlitch(logo);
-            }
-          });
-
-          this.typeHTML(sbRight, rightHTML, 2, true).then(() => {
-            this.startHeapDump();
-          });
-
-          const bootLog =
-            this.state.lang === "en"
-              ? `
-                      <span style="color:var(--alg-green)">> starting system...</span>
-                      loading kernel modules [ ok ]
-                      initializing runtime environment [ ok ]
-                      checking memory map [ ok ]
-                      mounting root filesystem [ ok ]
-                      starting user-session [ ok ]
-
-                      <span style="color:var(--alg-green)">system ready.</span>
-                    `
-              : `
-                      <span style="color:var(--alg-green)">> starting system...</span>
-                      cargando módulos del kernel [ ok ]
-                      inicializando entorno de ejecución [ ok ]
-                      verificando mapa de memoria [ ok ]
-                      montando sistema de archivos raíz [ ok ]
-                      iniciando sesión de usuario [ ok ]
-
-                      <span style="color:var(--alg-green)">system ready.</span>
-                    `;
-
-          // log central también se escribe mientras los sidebars se van tipeando
-          this.typeHTML(out, bootLog, 8).then(() => {
-            this.logEvent("SYSTEM_READY");
-            setTimeout(() => this.loadModule("about"), 400);
-          });
+          this.renderMenu();
+          this.log(`> ${t.consoleReady}`);
+          this.loadModule("about");
+          this.attachFooterEvents();
         },
 
-        wrapLogoChars(element) {
-          const text = element.innerText;
-          element.innerHTML = "";
+        renderMenu() {
+          const t = Data.i18n[this.state.lang];
+          const body = document.getElementById("menu-body");
+          if (!body) return;
 
-          for (let ch of text) {
-            if (ch === "\n") {
-              element.innerHTML += "<br>";
-            } else if (ch === " ") {
-              element.innerHTML += "&nbsp;";
-            } else {
-              element.innerHTML += `<span>${ch}</span>`;
-            }
+          let html = "";
+          t.menuItems.forEach((label, idx) => {
+            const key =
+              idx === 0
+                ? "about"
+                : idx === 1
+                ? "stack"
+                : idx === 2
+                ? "projects"
+                : "contact";
+            html += `${label}  <button class="menu-item-btn" onclick="App.loadModule('${key}')">[open]</button>\n`;
+          });
+
+          html += `\n${t.prompt}\n`;
+          html += `<span id="prompt-line"><span class="prompt-path">${t.promptPath}</span> _</span>`;
+
+          body.innerHTML = html;
+        },
+
+        attachFooterEvents() {
+          const langToggle = document.getElementById("lang-toggle");
+          const themeToggle = document.getElementById("theme-toggle");
+
+          if (langToggle) {
+            langToggle.onclick = () => {
+              this.state.lang = this.state.lang === "es" ? "en" : "es";
+              this.toMainScreen();
+            };
+          }
+
+          if (themeToggle) {
+            themeToggle.onclick = () => {
+              this.toggleTheme();
+            };
           }
         },
 
-        resetToIntro() {
-          this.clearIntervals();
-          this.state.booted = false;
-
-          const sbLeft = document.getElementById("sb-left");
-          const sbRight = document.getElementById("sb-right");
-          sbLeft.innerHTML = "";
-          sbRight.innerHTML = "";
-          sbLeft.classList.remove("active");
-          sbRight.classList.remove("active");
-
-          const out = document.getElementById("terminal-output");
-          out.innerHTML = "";
-          out.classList.add("centered");
-
-          this.renderIntro();
+        toggleTheme() {
+          if (this.state.theme === "dark") {
+            document.body.style.backgroundColor = "#e6e6e6";
+            document.body.style.color = "#000";
+            this.state.theme = "light";
+          } else {
+            document.body.style.backgroundColor = "#000";
+            document.body.style.color = "#f5f5f5";
+            this.state.theme = "dark";
+          }
         },
 
-        /* --- TYPEWRITER GENERAL --- */
-        async typeHTML(element, html, speed, noCursor = false) {
-          return new Promise(async (resolve) => {
-            element.innerHTML = "";
+        log(text) {
+          const el = document.getElementById("console-log");
+          if (!el) return;
+          const time = new Date()
+            .toLocaleTimeString("en-GB", { hour12: false })
+            .substring(0, 8);
+          el.textContent = `[${time}] ${text}`;
+        },
 
-            let cursor = null;
-            if (!noCursor) {
-              cursor = document.createElement("span");
-              cursor.className = "typing-cursor";
-              element.appendChild(cursor);
-            }
+        /* --- modules --- */
+        loadModule(key) {
+          const mod = Data.modules[key];
+          const t = mod ? mod[this.state.lang] : "";
+          const out = document.getElementById("content-body");
+          if (!out) return;
+          this.typeHTML(out, t, 3).then(() => {
+            if (key === "about") this.injectASCII();
+            this.log(`MODULE_LOAD: ${key.toUpperCase()}`);
+          });
+        },
+
+        typeHTML(element, html, speed) {
+          return new Promise((resolve) => {
+            element.innerHTML = "";
+            const cursor = document.createElement("span");
+            cursor.className = "typing-cursor";
+            element.appendChild(cursor);
 
             const parts = html.split(/(<[^>]+>)/g).filter((p) => p !== "");
 
-            for (let part of parts) {
-              if (part.startsWith("<") && part.endsWith(">")) {
-                if (cursor) cursor.insertAdjacentHTML("beforebegin", part);
-                else element.insertAdjacentHTML("beforeend", part);
-              } else {
-                for (let c of part) {
-                  const useGlitch = Math.random() < 0.02 && c !== " ";
-                  const chunk = useGlitch
-                    ? `<span class="glitch-char">${c}</span>`
-                    : c;
-
-                  if (cursor) cursor.insertAdjacentHTML("beforebegin", chunk);
-                  else element.insertAdjacentHTML("beforeend", chunk);
-
-                  if (c !== " " && c !== "\n") this.playKeySound();
-                  await new Promise((r) => setTimeout(r, speed));
-                }
+            let idx = 0;
+            const typeNextPart = () => {
+              if (idx >= parts.length) {
+                cursor.remove();
+                resolve();
+                return;
               }
-            }
+              const part = parts[idx++];
+              if (part.startsWith("<") && part.endsWith(">")) {
+                cursor.insertAdjacentHTML("beforebegin", part);
+                typeNextPart();
+              } else {
+                let i = 0;
+                const id = setInterval(() => {
+                  const c = part[i];
+                  const chunk =
+                    Math.random() < 0.02 && c !== " "
+                      ? `<span class="glitch-char">${c}</span>`
+                      : c;
+                  cursor.insertAdjacentHTML("beforebegin", chunk);
+                  i++;
+                  if (i >= part.length) {
+                    clearInterval(id);
+                    typeNextPart();
+                  }
+                }, speed);
+                App.intervals.push(id);
+              }
+            };
 
-            if (cursor) cursor.remove();
-            resolve(true);
-          });
-        },
-        /* --- MÓDULOS --- */
-        loadModule(key) {
-          const out = document.getElementById("terminal-output");
-          const content = Data.modules[key][this.state.lang];
-          this.typeHTML(out, content, 4).then(() => {
-            if (key === "about") this.injectASCII();
-            this.logEvent(`MODULE_LOAD: ${key.toUpperCase()}`);
+            typeNextPart();
           });
         },
 
@@ -921,88 +821,20 @@
           asciiEl.textContent = "";
           const lines = ASCII_ME.split("\n");
           let i = 0;
-          const interval = setInterval(() => {
+          const id = setInterval(() => {
             if (i >= lines.length) {
-              clearInterval(interval);
+              clearInterval(id);
               return;
             }
             asciiEl.textContent += lines[i] + "\n";
             i++;
           }, 8);
-          this.intervals.push(interval);
-        },
-
-        /* --- HEAP + LOG --- */
-        startHeapDump() {
-          const el = document.getElementById("heap-dump");
-          if (!el) return;
-          const gen = () => {
-            const addr =
-              "0x" +
-              Math.floor(Math.random() * 65535)
-                .toString(16)
-                .toUpperCase()
-                .padStart(4, "0");
-            const bytes = Array.from({ length: 4 }, () =>
-              Math.floor(Math.random() * 255)
-                .toString(16)
-                .toUpperCase()
-                .padStart(2, "0")
-            ).join(" ");
-            return `${addr} : ${bytes}`;
-          };
-          el.innerHTML = "";
-          for (let i = 0; i < 6; i++) {
-            const d = document.createElement("div");
-            d.textContent = gen();
-            el.appendChild(d);
-          }
-          const id = setInterval(() => {
-            if (!el.children.length) return;
-            const r = Math.floor(Math.random() * el.children.length);
-            el.children[r].textContent = gen();
-          }, 180);
           this.intervals.push(id);
-        },
-
-        logEvent(msg) {
-          const logContainer = document.getElementById("debug-log");
-          if (!logContainer) return;
-          const time = new Date()
-            .toLocaleTimeString("en-US", { hour12: false })
-            .split(" ")[0];
-          const entry = document.createElement("div");
-          entry.textContent = `[${time}] ${msg}`;
-          logContainer.prepend(entry);
-          if (logContainer.children.length > 8) {
-            logContainer.lastChild.remove();
-          }
-        },
-
-        /* --- TOGGLES EN MODO SISTEMA --- */
-        toggleLang() {
-          this.state.lang = this.state.lang === "en" ? "es" : "en";
-          if (this.state.booted) this.bootSystem();
-        },
-
-        toggleTheme() {
-          this.state.theme = this.state.theme === "dark" ? "light" : "dark";
-          document.body.classList.toggle("light-mode");
-          if (this.state.booted) this.bootSystem();
         },
       };
 
       window.App = App;
       window.onload = () => App.init();
-
-      // listeners de intro (para que no se pierdan si se re-renderiza)
-      document.addEventListener("click", (e) => {
-        if (e.target && e.target.id === "intro-lang-btn") {
-          App.toggleLangIntro();
-        } else if (e.target && e.target.id === "intro-theme-btn") {
-          App.toggleThemeIntro();
-        }
-      });
     </script>
   </body>
 </html>
