@@ -776,7 +776,14 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>[cv]</a> (comi
             }
           });
 
-          window.addEventListener("click", () => this.toYinScreen());
+          const skipBoot = () => {
+            window.removeEventListener("click", skipBoot);
+            window.removeEventListener("keydown", skipBoot);
+            this.toYinScreen();
+          };
+
+          window.addEventListener("click", skipBoot);
+          window.addEventListener("keydown", skipBoot);
 
           out.textContent = "";
 
