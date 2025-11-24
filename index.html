@@ -882,6 +882,14 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>[cv]</a> (comi
             hintEl.style.opacity = 1;
             hintEl.style.animation = "hintGlitch 0.45s linear";
           }
+
+          // 👉 ESTA LÍNEA FALTABA Y CAUSABA EL LOOP
+          window.addEventListener("keydown", function startMain(e) {
+            if (e.key === "Enter") {
+              window.removeEventListener("keydown", startMain);
+              App.toMainScreen();
+            }
+          });
         },
         /* ================= MAIN TERMINAL ================= */
         toMainScreen() {
