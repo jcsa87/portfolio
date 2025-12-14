@@ -7,6 +7,35 @@
     <link rel="icon" type="image/png" href="assets/favicon.png" />
 
     <style>
+
+      /* ===== TOAST NOTIFICATION ===== */
+#sys-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #000;
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  padding: 8px 12px;
+  font-family: "Lucida Console", monospace;
+  font-size: 12px;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none; /* Para que no moleste si pasas el mouse */
+  transition: opacity 0.3s ease-in-out;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+}
+
+#sys-toast.show {
+  opacity: 1;
+}
+
+/* Si el tema cambia a light, ajustamos colores (opcional) */
+body[style*="background-color: rgb(230"] #sys-toast {
+  background-color: #fff;
+  color: #000;
+  border-color: #000;
+}
       :root {
         --bg-color: #000000;
         --text-main: #f5f5f5;
@@ -344,6 +373,8 @@
       src="https://assets.mixkit.co/sfx/preview/mixkit-soft-typing-on-computer-keyboard-2533.mp3"
       preload="auto"
     ></audio>
+
+    <div id="sys-toast"></div>
 
     <script>
       /* ========= UBICACIÓN / TEMPERATURA ========= */
@@ -698,6 +729,7 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>[cv]</a> (comi
           skipIntro: false,
         },
         intervals: [],
+        toastTimer: null,
 
         init() {
           if (keySound) keySound.volume = this.state.volume;
@@ -737,6 +769,22 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>[cv]</a> (comi
             </div>
           `;
         },
+
+        showToast(msg) {
+    const toast = document.getElementById("sys-toast");
+    if (!toast) return;
+
+    toast.textContent = `[SYSTEM]: ${msg}`; // Prefijo estilo consola
+    toast.classList.add("show");
+
+    // Limpiamos el temporizador anterior si el usuario hace click rápido
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+
+    // Ocultar después de 3 segundos
+    this.toastTimer = setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
+  },
 
         async startBootSequence() {
           const t = Data.i18n[this.state.lang];
@@ -1017,10 +1065,24 @@ async typeQuote(element, lines, speed) {
           }
 
           if (volDown && volUp) {
-            volDown.onclick = () => this.changeVolume(-0.05);
-            volUp.onclick = () => this.changeVolume(0.05);
-            this.updateVolumeDisplay();
-          }
+    // Definimos el mensaje según el idioma
+    const getMsg = () => 
+      this.state.lang === "es" 
+        ? "Módulo de música: Pendiente de instalación..." 
+        : "Music module: Pending installation...";
+
+    volDown.onclick = () => {
+      this.changeVolume(-0.05); // Mantiene el cambio de volumen del teclado
+      this.showToast(getMsg()); // Muestra la alerta
+    };
+
+    volUp.onclick = () => {
+      this.changeVolume(0.05);  // Mantiene el cambio de volumen del teclado
+      this.showToast(getMsg()); // Muestra la alerta
+    };
+    
+    this.updateVolumeDisplay();
+  }
         },
 
         toggleTheme() {
