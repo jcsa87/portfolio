@@ -4,7 +4,7 @@ retro-styled interactive terminal interface featuring advanced ASCII animation, 
 Includes dynamic sidebars, noise overlays, live system logs, typewriter effects, WebAudio keypress sounds, and a Yin-Yang ASCII intro animation.
 
 
-## 🚀 Main Features
+# 🚀 Main Features
 
 ### 🎨 ASCII Engine
 - Progressive typewriter animation for the Yin-Yang intro.
@@ -41,9 +41,9 @@ Each module loads with a typewriter effect:
 - Continuous glitch animation for the logo.  
 - Light/dark mode toggle + dynamic language switching.
 
----
 
-## 📂 Project Structure
+
+# 📂 Project Structure
 - index.html # main file
 - ascii/ # ASCII artworks (intro + modules)
 - styles/ # inline CSS styling (inside index.html)
@@ -51,9 +51,7 @@ Each module loads with a typewriter effect:
 - assets/ # noise/overlays/fonts (optional)
 
 
----
-
-## 🛠️ Technologies Used
+# 🛠️ Technologies Used
 
 - **HTML5** (single static file)
 - **CSS3** (CRT + glitch effects)
@@ -65,7 +63,7 @@ Each module loads with a typewriter effect:
 ## ▶️ How to Run
 
 1. Download the project.  
-2. Open **index.html** in any modern browser.  
+2. Open **index.html** in any browser.  
 3. Click the Yin-Yang ASCII to boot the system.
 
 No build steps — no dependencies — no npm.  

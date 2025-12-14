@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>cmd_portfolio</title>
+    <title>portfolio.exe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
 
@@ -405,48 +405,22 @@
         keySound.play();
       }
 
-      /* ========= CONSTANT ASCII ART ========= */
-      const YINYANG_ART = String.raw`
-                                                            &&&&&&&&                                                            
-                                                    &&&&&............&&&&&X+                                                    
-                                                &&&.......;+xXXXXXx+.....&&&&xx+                                                
-                                             &&.....xXXXXXXXXXXXXXXXXXXx...X&&&&$X+                                             
-                                          &&....xXXXXXXXXXXXXXXXXXXXXXXXXX+..&&&&&$Xx+                                          
-                                        &&...xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:.x&&&&&&$X+                                        
-                                      &&...XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX+.x&&&&&&&$X+                                      
-                                     &..:XXXXXXXXXXXXXXXXXXX:.......XXXXXXXXXX+.&&&&&&&&&$X                                     
-                                   &&..xXXXXXXXXXXXXXXXXXXX..&&&&&&..XXXXXXXXXX..&&&&&&&&&&$x                                   
-                                  &..:XXXXXXXXXXXXXXXXXXXX+.&&&&&&&&.;XXXXXXXXXx.&&&&&&&&&&&$x                                  
-                                 &..xXXXXXXXXXXXXXXXXXXXXX+&&&&&&&&&&;XXXXXXXXXX.&&&&&&&&&&&&$x                                 
-                                &..xXXXXXXXXXXXXXXXXXXXXXX+.&&&&&&&&.;XXXXXXXXX+.&&&&&&&&&&&&&$x                                
-                               &$.xXXXXXXXXXXXXXXXXXXXXXXXX...&&&&...XXXXXXXXXX..&&&&&&&&&&&&&&$x                               
-                              &&.+XXXXXXXXXXXXXXXXXXXXXXXXXXx......xXXXXXXXXXX;.&&&&&&&&&&&&&&&&$+                              
-                              &.:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;.&&&&&&&&&&&&&&&&&&X                              
-                             &&.xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX..&&&&&&&&&&&&&&&&&&&$+                             
-                             &..XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx...&&&&&&&&&&&&&&&&&&&&&x                             
-                             &.+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:...&&&&&&&&&&&&&&&&&&&&&&&x                             
-                             &.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx;::.......&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
-                             &.XXXXXXXXXXXXXXXXXXXXXXXXx.........:X&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
-                             &.XXXXXXXXXXXXXXXXXXXXXx....&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
-                             &.xXXXXXXXXXXXXXXXXXXx...&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
-                             &.:XXXXXXXXXXXXXXXXX:..&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&x                             
-                             &$.XXXXXXXXXXXXXXXX..&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$+                             
-                              &.;XXXXXXXXXXXXXX..&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&X                              
-                              &&.xXXXXXXXXXXXX+.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$+                              
-                               &..XXXXXXXXXXXX.&&&&&&&&&&&&&&&&:.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&X                               
-                                &..XXXXXXXXXXX.&&&&&&&&&&&&&........&&&&&&&&&&&&&&&&&&&&&&&&&&&$                                
-                                &&..XXXXXXXXXX.&&&&&&&&&&&&&.+XXXXx.&&&&&&&&&&&&&&&&&&&&&&&&&&$x                                
-                                 &&..xXXXXXXXX.&&&&&&&&&&&&&.;XXXX;.&&&&&&&&&&&&&&&&&&&&&&&&&$x                                 
-                                   &..:XXXXXXX.&&&&&&&&&&&&&&......&&&&&&&&&&&&&&&&&&&&&&&&$X                                   
-                                    &&..+XXXXX.X&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$x                                    
-                                      &+..+XXX+.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$X                                      
-                                       &&...;XX:.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$X+                                       
-                                         &&&...+:.&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$Xx;                                         
-                                            &&......&&&&&&&&&&&&&&&&&&&&&&&&&&&&&$X+                                            
-                                               &&&....$&&&&&&&&&&&&&&&&&&&&&&&$xx                                               
-                                                   &&&....X&&&&&&&&&&&&$XxxxX                                                   
-                                                        &&&XxxxxxxxxxxX;                                                        
-`;
+     /* ========= CAMBIO EN LAS CONSTANTES ========= */
+// Borra YINYANG_ART y pon esto:
+const INTRO_QUOTE = {
+  es: [
+    "\"El corazón del prudente adquiere conocimiento,",
+    "y el oído de los sabios busca la ciencia.\"",
+    "",
+    "— Proverbios 18:15"
+  ],
+  en: [
+    "\"An intelligent heart acquires knowledge,",
+    "and the ear of the wise seeks knowledge.\"",
+    "",
+    "— Proverbs 18:15"
+  ]
+};
 
       const ASCII_ME = String.raw`                                      
  ******#***=   @@@@@@@@@@.   .=***************** 
@@ -553,10 +527,9 @@ C:\\portafolio> type about.txt
 usuario: juan_cruz_senicen_acosta  
 edad: 21  
 ciudad: corrientes, argentina  
-universidad: unne (lic. en sistemas de la información)
+universidad: unne (licenciatura  en sistemas de la información)
 rol: estudiante_sistemas / dev_en_formación  
 stack: sql / mysql / sqlserver / php / c# / java / javascript / nextjs / tailwind  
-enfoque: arquitectura_limpia, datos_estructurados, diseño_de_sistemas
 
 experiencia:
   - sistemas_de_gestion
@@ -564,12 +537,13 @@ experiencia:
   - autenticación_segura
   - bases_normalizadas
   - reportes_y_métricas
+  - modularización
 
 intereses:
   - filosofía/espiritualidad
   - minimalismo
-  - fitness
-  - software_craftsmanship
+  - fitness/MMA
+  - tecnología
 
 nota:
   aún descubriendo mi camino como desarrollador.
@@ -589,10 +563,9 @@ C:\\portfolio> type about.txt
 user: juan_cruz_senicen_acosta  
 age: 21  
 city: corrientes, argentina  
-university: unne (systems engineering undergraduate)
+university: unne (bachelor of science in information systems)
 role: systems_student / dev_in_progress  
 stack: sql / mysql / sqlserver / php / c# / java / javascript / nextjs / tailwind  
-focus: clean_architecture, structured_data, full_system_design
 
 experience:
   - management_systems
@@ -600,12 +573,13 @@ experience:
   - secure_auth
   - normalized_databases
   - reports_and_metrics
+  - modularization
 
 interests:
   - philosophy/spirituality
   - minimalism
-  - fitness
-  - software_craftsmanship
+  - fitness/MMA
+  - technology
 
 note:
   still exploring my path as a developer.
@@ -835,30 +809,78 @@ cv       : <a href="assets/JuanCruzSenicenAcosta_CV.pdf" download>[cv]</a> (comi
         },
 
         toYinScreen() {
-          this.clearTimers();
-          this.state.mode = "yin";
-          this.state.skipIntro = false;
+  this.clearTimers();
+  this.state.mode = "yin"; // Puedes mantener el id "yin" para no romper CSS
+  this.state.skipIntro = false;
 
-          const root = document.getElementById("app-root");
-          const t = Data.i18n[this.state.lang];
-          root.innerHTML = `
-            <div id="yin-screen" class="screen">
-              <div id="yin-art" class="yin-art"></div>
-              <div id="yin-hint" style="opacity:0;"></div>
-            </div>
-          `;
+  const root = document.getElementById("app-root");
+  
+  // Usamos una clase nueva para texto centrado y limpio
+  root.innerHTML = `
+    <div id="yin-screen" class="screen" style="border-color: var(--text-dim);">
+      <div id="quote-content" style="font-size: 16px; line-height: 1.6; color: var(--text-main);"></div>
+      <div id="yin-hint" style="opacity:0; margin-top: 20px;"></div>
+    </div>
+  `;
 
-          const artEl = document.getElementById("yin-art");
-          this.typeYinArt(artEl, 10);
+  const quoteEl = document.getElementById("quote-content");
+  // Seleccionamos idioma
+  const quoteLines = INTRO_QUOTE[this.state.lang];
+  
+  this.typeQuote(quoteEl, quoteLines, 40); // Velocidad un poco más lenta para solemnidad
 
-          // cualquier click o ENTER saltea la intro
-          root.addEventListener("click", () => this.skipYin());
-          window.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-              this.skipYin();
-            }
-          });
-        },
+  // Eventos para saltar (igual que antes)
+  root.addEventListener("click", () => this.skipYin());
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") this.skipYin();
+  });
+},
+
+async typeQuote(element, lines, speed) {
+  element.innerHTML = "";
+  
+  for (let i = 0; i < lines.length; i++) {
+    if (this.state.skipIntro) return;
+    
+    // Creamos un div por línea para controlar el centrado
+    const lineDiv = document.createElement("div");
+    lineDiv.style.textAlign = "center"; // Centrado elegante
+    lineDiv.style.minHeight = "1.6em";  // Evita saltos si la línea está vacía
+    element.appendChild(lineDiv);
+
+    const text = lines[i];
+    
+    for (let j = 0; j < text.length; j++) {
+       if (this.state.skipIntro) {
+         // Si salta, renderiza todo de golpe
+         element.innerHTML = lines.map(l => `<div style="text-align:center">${l}</div>`).join("");
+         return;
+       }
+       
+       lineDiv.textContent += text[j];
+       if(text[j] !== " ") playKey();
+       await new Promise(r => setTimeout(r, speed));
+    }
+    // Pausa pequeña entre líneas
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  // Mostrar el hint de [ENTER] al finalizar
+  const hintEl = document.getElementById("yin-hint");
+  if (hintEl) {
+    hintEl.textContent = App.state.lang === "es" ? "[ENTER] continuar" : "[ENTER] continue";
+    hintEl.style.opacity = 1;
+    hintEl.className = "blink"; // Usamos tu animación blink existente
+  }
+  
+  // Listener para arrancar
+  window.addEventListener("keydown", function startMain(e) {
+    if (e.key === "Enter") {
+      window.removeEventListener("keydown", startMain);
+      App.toMainScreen();
+    }
+  });
+},
 
         async typeYinArt(element, speed) {
           const lines = YINYANG_ART.split("\n");
