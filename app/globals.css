@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  overflow-x: hidden;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Estilos personalizados - Estética Yin Yang */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-black via-gray-800 to-black;
+}
+
+.gradient-text-inverse {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-white;
+}
+
+.card-hover {
+  @apply transition-all duration-500 hover:scale-105 hover:shadow-2xl;
+}
+
+/* Efectos de transición suave */
+.section-transition {
+  @apply transition-all duration-1000 ease-in-out;
+}
+
+/* Patrón de fondo sutil */
+/* Patrón de fondo sutil - CORREGIDO */
+.yin-yang-pattern {
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(0, 0, 0, 0.06) 0%,
+      /* Opacidad subida de 0.03 a 0.06 para visibilidad */ transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 50%,
+      rgba(0, 0, 0, 0.06) 0%,
+      /* Opacidad subida de 0.03 a 0.06 para visibilidad */ transparent 50%
+    );
+
+  /* Propiedades críticas para que se vea bien en pantalla completa */
+  background-size: 100vw 100vh; /* Fuerza al gradiente a ocupar toda la pantalla */
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Animación de rotación continua suave */
+@keyframes rotate-smooth {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-smooth {
+  animation: rotate-smooth 20s linear infinite;
+}
+
+/* Lowercase aesthetic */
+.lowercase {
+  text-transform: lowercase;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Ocultar barra de scroll para IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
