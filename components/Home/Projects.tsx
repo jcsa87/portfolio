@@ -24,7 +24,7 @@ const projects = [
     links: { github: "#", demo: "https://ferpadel.versorisports.com" },
     gradient: "from-cyan-900 to-blue-900",
     color: "#0891b2",
-    image: "/projects/versori.png",
+    image: "/Projects/versori.png",
   },
   {
     id: 2,
