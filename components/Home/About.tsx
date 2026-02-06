@@ -28,11 +28,7 @@ const YinYangBadge = () => {
           stroke="currentColor"
           strokeWidth="1"
         />
-        <path
-          d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z"
-          fill="currentColor"
-          fillOpacity="0.2"
-        />
+
         <path
           fillRule="evenodd"
           clipRule="evenodd"
