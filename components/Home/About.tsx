@@ -127,9 +127,7 @@ export default function About() {
                 </p>
               </div>
             </div>
-            <div className="absolute top-4 right-4 bg-white text-black text-[10px] font-bold px-2 py-1 lowercase tracking-widest rounded-sm">
-              4° año (2026)
-            </div>
+
           </motion.div>
 
           {/* 2. CONTENIDO (Columna Derecha) */}
