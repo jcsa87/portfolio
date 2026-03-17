@@ -1,103 +1,104 @@
-# Portafolio Personal - Estudiante de Sistemas UNNE
+# 🌌 Portfolio Personal
 
-Portafolio web moderno y responsive desarrollado con tecnologías de vanguardia para mostrar proyectos, habilidades y experiencia académica.
-
-## 🚀 Tecnologías Utilizadas
-
-- **Next.js 14** - Framework de React para producción
-- **TypeScript** - Tipado estático para JavaScript
-- **Tailwind CSS** - Framework de utilidades CSS
-- **Framer Motion** - Animaciones fluidas y modernas
-- **Lucide React** - Iconos modernos y ligeros
-
-## ✨ Características
-
-- ✅ Diseño completamente responsive
-- ✅ Modo oscuro (dark mode)
-- ✅ Animaciones suaves con Framer Motion
-- ✅ Navegación fluida con scroll suave
-- ✅ Formulario de contacto funcional
-- ✅ Optimizado para SEO
-- ✅ Carga rápida y rendimiento optimizado
-
-## 📦 Instalación
-
-1. Clona el repositorio o navega al directorio:
-
-```bash
-cd portfolio-unne
-```
-
-2. Instala las dependencias:
-
-```bash
-npm install
-```
-
-3. Ejecuta el servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-4. Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
-
-## 🛠️ Scripts Disponibles
-
-- `npm run dev` - Inicia el servidor de desarrollo
-- `npm run build` - Construye la aplicación para producción
-- `npm start` - Inicia el servidor de producción
-- `npm run lint` - Ejecuta el linter de ESLint
-
-## 📝 Personalización
-
-### Cambiar Información Personal
-
-1. **Hero Section**: Edita `components/Hero.tsx` para cambiar el nombre y descripción
-2. **About Section**: Modifica `components/About.tsx` con tu información académica
-3. **Skills**: Actualiza las habilidades en `components/Skills.tsx`
-4. **Projects**: Agrega tus proyectos en `components/Projects.tsx`
-5. **Contact**: Cambia los datos de contacto en `components/Contact.tsx`
-
-### Cambiar Colores
-
-Los colores principales se pueden modificar en `tailwind.config.js` en la sección `colors.primary`.
-
-### Agregar Proyectos
-
-Edita el array `projects` en `components/Projects.tsx` y agrega tus propios proyectos con:
-
-- Título
-- Descripción
-- Tecnologías utilizadas
-- Enlaces a GitHub y demo
-- Imagen o emoji representativo
-
-## 🌐 Despliegue
-
-### Vercel (Recomendado)
-
-1. Conecta tu repositorio a [Vercel](https://vercel.com)
-2. Vercel detectará automáticamente Next.js
-3. Despliega con un solo click
-
-### Otras Plataformas
-
-El proyecto puede desplegarse en cualquier plataforma que soporte Next.js:
-
-- Netlify
-- AWS Amplify
-- Railway
-- Render
-
-## 📄 Licencia
-
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
-
-## 👨‍💻 Autor
-
-Estudiante de Licenciatura en Sistemas - Universidad Nacional del Nordeste (UNNE)
+> Portafolio web desarrollado con tecnologías modernas, enfocado en la experiencia de usuario, el rendimiento y la estética visual minimalista.
 
 ---
 
-¡Gracias por visitar mi portafolio! 🚀
+## 🚀 Stack Tecnológico
+
+La base técnica del proyecto se seleccionó para garantizar velocidad, SEO y una experiencia de desarrollo (DX) fluida.
+
+| Tecnología | Propósito |
+| :--- | :--- |
+| **Next.js 14** | Framework base con App Router para renderizado optimizado (SSR/ISR). |
+| **TypeScript** | Robustez y seguridad en el tipado de toda la aplicación. |
+| **Tailwind CSS** | Diseño responsivo y sistema de diseño basado en utilidades. |
+| **Framer Motion** | Orquestación de animaciones complejas, transiciones de página y efectos de scroll. |
+| **Lucide React** | Set de iconos minimalistas y altamente personalizables. |
+
+---
+
+## ✨ Características Destacadas
+
+### ☯️ Intro Dinámica "Yin-Yang"
+Una experiencia de carga personalizada que utiliza las iniciales de autor ("JCSA") con un efecto de entrada y salida tipo "pop" inverso, orquestado con `AnimatePresence`.
+
+### 📱 Diseño "Mobile-First" Inmersivo
+Interfaz completamente responsiva que se adapta desde dispositivos móviles hasta pantallas ultra-wide, manteniendo una jerarquía visual clara.
+
+### 🎭 Animaciones In-View
+Utilización de `whileInView` de Framer Motion para revelar secciones y elementos a medida que el usuario navega, creando un flujo de lectura orgánico.
+
+### 💼 Showroom de Proyectos
+Un componente de proyectos avanzado con:
+- **Atmósfera dinámica**: El fondo cambia su gradiente según el proyecto seleccionado.
+- **Carrusel inteligente**: Navegación fluida entre proyectos con estados de carga y previsualización.
+- **Metadatos técnicos**: Clasificación por tipo de proyecto y tecnologías específicas.
+
+---
+
+## 📂 Estructura del Proyecto
+
+```bash
+portfolio-unne/
+├── app/                 # Rutas, layout principal y configuración central
+│   ├── globals.css      # Estilos globales y tokens de diseño
+│   └── page.tsx         # Punto de entrada principal
+├── components/          # Arquitectura de componentes atómicos
+│   ├── Home/            # Secciones principales (Hero, About, Projects, etc.)
+│   ├── Intro/           # Componentes de entrada y marca
+│   └── SectionWrapper/  # HOC para animaciones de entrada consistentes
+├── public/              # Activos estáticos (imágenes, iconos, etc.)
+└── tailwind.config.js   # Configuración personalizada de temas y colores
+```
+
+---
+
+## ⚙️ Configuración y Ejecución
+
+### Requisitos Previos
+- Node.js 18.x o superior
+- npm o yarn
+
+### Pasos
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/jcsa87/portfolio-unne.git
+   cd portfolio-unne
+   ```
+
+2. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
+
+3. **Desarrollo:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Producción:**
+   ```bash
+   npm run build
+   npm start
+   ```
+
+---
+
+## 🎨 Guía de Personalización
+
+Para adaptar este portafolio a tu marca personal, sigue estos pasos:
+
+1.  **Información de Marca**: En `components/Intro/YinYangIntro.tsx`, modifica el array `initials` con tus iniciales.
+2.  **Secciones**: Las secciones se encuentran organizadas en `components/Home/`. Cada archivo es autocontenido.
+3.  **Proyectos**: Edita el array `projects` en `components/Home/Projects.tsx` para añadir tus propios trabajos.
+4.  **Colores**: Modifica `tailwind.config.js` para cambiar la paleta de colores global.
+
+---
+
+## 👨‍💻 Autor
+
+**Estudiante de Licenciatura en Sistemas**
+*Universidad Nacional del Nordeste (UNNE)*
+
+---

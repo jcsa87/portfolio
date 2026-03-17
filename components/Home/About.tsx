@@ -10,6 +10,7 @@ import {
   Terminal,
   Activity,
 } from "lucide-react";
+import Image from "next/image";
 
 // --- YIN-YANG (Sutil) ---
 const YinYangBadge = () => {
@@ -109,13 +110,15 @@ export default function About() {
             className="md:col-span-4 relative group h-full min-h-[400px]"
           >
             <div className="w-full h-full bg-neutral-900 border border-white/10 overflow-hidden relative rounded-sm grayscale group-hover:grayscale-0 transition-all duration-700">
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-[url('/placeholder-texture.png')] bg-cover opacity-60">
-                <span className="text-4xl mb-2">🎓</span>
-                <span className="text-xs font-mono lowercase tracking-widest text-white/50">
-                  foto formal
-                </span>
-              </div>
-              <div className="absolute bottom-0 left-0 w-full p-5 bg-gradient-to-t from-black/90 to-transparent">
+              <Image
+                src="/About/foto_perfil.jpg"
+                alt="Juan Cruz Senicen Acosta"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                priority
+              />
+              <div className="absolute bottom-0 left-0 w-full p-5 bg-gradient-to-t from-black/90 to-transparent z-10">
                 <p className="text-white text-2xl font-bold uppercase leading-none tracking-tighter mb-1">
                   juan cruz
                 </p>
@@ -194,9 +197,9 @@ export default function About() {
                     <Activity size={12} /> fuera de la terminal
                   </h4>
                   <p className="text-xs text-gray-400 font-light leading-relaxed lowercase text-justify">
-                    la estética b&n refleja mi interés por el{" "}
-                    <span className="text-white">taoísmo</span>. complemento lo
-                    académico con <strong>kick boxing</strong> y música.
+                    seleccioné esta estetica ya que refleja mi interés por el{" "}
+                    <span className="text-white">taoísmo</span> y el camino del medio. Complemento lo
+                    académico con <strong>actividad física</strong> y música.
                   </p>
                 </div>
 
@@ -213,9 +216,6 @@ export default function About() {
                     <div className="absolute top-1 left-1 w-1 h-1 bg-red-500 rounded-full animate-pulse"></div>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-mono lowercase tracking-widest text-white/50">
-                      origen.mp4
-                    </span>
                   </div>
                 </div>
               </motion.div>
@@ -235,7 +235,7 @@ export default function About() {
                   <InfoRow
                     icon={MapPin}
                     label="ubicación"
-                    value="corrientes, ar"
+                    value="corrientes, argentina"
                   />
                 </div>
 

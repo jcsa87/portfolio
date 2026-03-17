@@ -20,7 +20,6 @@ const projects = [
     description:
       "sistema integral para gestión de reservas de canchas y torneos. api de pagos personalizada y administración multi-club.",
     technologies: ["Next.js", "Node.js", "supabase", "Tailwind"],
-    // Ejemplo: GitHub privado (#), Demo activa
     links: { github: "#", demo: "https://ferpadel.versorisports.com" },
     gradient: "from-cyan-900 to-blue-900",
     color: "#0891b2",
@@ -28,27 +27,37 @@ const projects = [
   },
   {
     id: 2,
-    title: "e-commerce pro",
-    type: "plataforma de ventas",
+    title: "trexx padel store",
+    type: "e-commerce premium",
     description:
-      "tienda online con carrito persistente, pagos vía stripe y panel de administración.",
-    technologies: ["Next.js", "TypeScript", "Stripe"],
-    // Ejemplo: Ambos activos
-    links: { github: "#", demo: "#" },
+      "tienda online premium de artículos de pádel con experiencia de usuario fluida y animaciones de alto nivel.",
+    technologies: ["React", "Tailwind CSS", "Framer Motion"],
+    links: { github: "https://github.com/jcsa87/trexx-padel-store", demo: "https://trexxeccomerce.vercel.app/" },
     gradient: "from-emerald-900 to-teal-900",
-    color: "#059669",
+    color: "#b31109ff",
+    image: "/Projects/trexx.png",
   },
   {
     id: 3,
-    title: "task manager",
-    type: "mobile app",
+    title: "nike project desktop",
+    type: "desktop app",
     description:
-      "organizador personal con sincronización cloud y modo offline.",
-    technologies: ["React Native", "Firebase", "Redux"],
-    // Ejemplo: Sin demo web (es app móvil)
-    links: { github: "#", demo: "#" },
+      "gestión de ventas, inventario y facturación para tiendas deportivas. sistema robusto con arquitectura cliente-servidor.",
+    technologies: ["C#", ".NET WinForms", "SQL Server"],
+    links: { github: "https://github.com/jcsa87/nikeprojectdesktop", demo: "#" },
     gradient: "from-purple-900 to-fuchsia-900",
     color: "#9333ea",
+  },
+  {
+    id: 4,
+    title: "nike e-commerce",
+    type: "plataforma web",
+    description:
+      "e-commerce de calzado con catálogo dinámico, gestión de stock y panel administrativo completo.",
+    technologies: ["PHP", "CodeIgniter 4", "Bootstrap"],
+    links: { github: "https://github.com/jcsa87/nikeproject", demo: "#" },
+    gradient: "from-blue-900 to-indigo-900",
+    color: "#1e40af",
   },
 ];
 
