@@ -15,6 +15,18 @@ import Image from "next/image";
 const projects = [
   {
     id: 1,
+    title: "versori sports",
+    type: "plataforma saas",
+    description:
+      "el sistema operativo inteligente diseñado para los clubes deportivos líderes. gestión integral, branding y comunidad.",
+    technologies: ["Next.js 15", "Tailwind CSS v4", "Framer Motion", "Supabase"],
+    links: { github: "#", demo: "https://versorisports.com" },
+    gradient: "from-zinc-900 to-black",
+    color: "#ffffff",
+    image: "/Projects/versori-sports.png",
+  },
+  {
+    id: 2,
     title: "versori padel",
     type: "saas de gestión",
     description:
@@ -26,7 +38,7 @@ const projects = [
     image: "/Projects/versori.png",
   },
   {
-    id: 2,
+    id: 3,
     title: "trexx padel store",
     type: "e-commerce premium",
     description:
@@ -38,7 +50,7 @@ const projects = [
     image: "/Projects/trexx.png",
   },
   {
-    id: 3,
+    id: 4,
     title: "nike project desktop",
     type: "desktop app",
     description:
@@ -49,7 +61,7 @@ const projects = [
     color: "#9333ea",
   },
   {
-    id: 4,
+    id: 5,
     title: "nike e-commerce",
     type: "plataforma web",
     description:
