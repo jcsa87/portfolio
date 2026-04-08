@@ -1,10 +1,10 @@
-# 🌌 Portfolio Personal
+# Portfolio Personal
 
 > Portafolio web desarrollado con tecnologías modernas, enfocado en la experiencia de usuario, el rendimiento y la estética visual minimalista.
 
 ---
 
-## 🚀 Stack Tecnológico
+## Stack Tecnológico
 
 La base técnica del proyecto se seleccionó para garantizar velocidad, SEO y una experiencia de desarrollo (DX) fluida.
 
@@ -18,18 +18,18 @@ La base técnica del proyecto se seleccionó para garantizar velocidad, SEO y un
 
 ---
 
-## ✨ Características Destacadas
+## Características Destacadas
 
-### ☯️ Intro Dinámica "Yin-Yang"
+### Intro Dinámica
 Una experiencia de carga personalizada que utiliza las iniciales de autor ("JCSA") con un efecto de entrada y salida tipo "pop" inverso, orquestado con `AnimatePresence`.
 
-### 📱 Diseño "Mobile-First" Inmersivo
+### Diseño "Mobile-First" Inmersivo
 Interfaz completamente responsiva que se adapta desde dispositivos móviles hasta pantallas ultra-wide, manteniendo una jerarquía visual clara.
 
-### 🎭 Animaciones In-View
+### Animaciones In-View
 Utilización de `whileInView` de Framer Motion para revelar secciones y elementos a medida que el usuario navega, creando un flujo de lectura orgánico.
 
-### 💼 Showroom de Proyectos
+### Showroom de Proyectos
 Un componente de proyectos avanzado con:
 - **Atmósfera dinámica**: El fondo cambia su gradiente según el proyecto seleccionado.
 - **Carrusel inteligente**: Navegación fluida entre proyectos con estados de carga y previsualización.
@@ -37,7 +37,7 @@ Un componente de proyectos avanzado con:
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```bash
 portfolio-unne/
@@ -54,7 +54,7 @@ portfolio-unne/
 
 ---
 
-## ⚙️ Configuración y Ejecución
+## Configuración y Ejecución
 
 ### Requisitos Previos
 - Node.js 18.x o superior
@@ -85,18 +85,7 @@ portfolio-unne/
 
 ---
 
-## 🎨 Guía de Personalización
-
-Para adaptar este portafolio a tu marca personal, sigue estos pasos:
-
-1.  **Información de Marca**: En `components/Intro/YinYangIntro.tsx`, modifica el array `initials` con tus iniciales.
-2.  **Secciones**: Las secciones se encuentran organizadas en `components/Home/`. Cada archivo es autocontenido.
-3.  **Proyectos**: Edita el array `projects` en `components/Home/Projects.tsx` para añadir tus propios trabajos.
-4.  **Colores**: Modifica `tailwind.config.js` para cambiar la paleta de colores global.
-
----
-
-## 👨‍💻 Autor
+## Autor
 
 **Estudiante de Licenciatura en Sistemas**
 *Universidad Nacional del Nordeste (UNNE)*
